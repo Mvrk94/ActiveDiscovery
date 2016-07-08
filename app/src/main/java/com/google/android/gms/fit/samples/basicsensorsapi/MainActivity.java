@@ -74,6 +74,7 @@ import com.google.android.gms.fitness.result.ListSubscriptionsResult;
 import com.google.android.gms.fitness.result.SessionReadResult;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private static final String DATE_FORMAT ="yyyy.MM.dd HH:mm:ss";
     // [START auth_variable_references]
     public static GoogleApiClient mClient = null;
+
     // [END auth_variable_references]
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -107,10 +109,14 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private static OnDataPointListener distListener;
     private static DataSource walkDataSource;
     private static DataSource distDataSource;
+    private ArrayList<OnDataPointListener> listeners = new ArrayList<>();
+    private ArrayList<DataSource> dataSources = new ArrayList<>();
     private DataSet walkDataSet;
     private Session session;
     private long startTime;
     private long stopTime;
+
+
 
     private boolean hasWorkoutStarted = false;
 
@@ -133,15 +139,19 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             Date now = new Date();
             cal.setTime(now);
             startTime = cal.getTimeInMillis();
-            Thread thread = new Thread(){
-                public void run(){
-                    Log.i(TAG, "NEW TREAD STARTING------------------------------------------------------------------------------------------");
-                    startDistanceListening();
-                    Log.i(TAG, "NEW TREAD STOPING------------------------------------------------------------------------------------------");
-                }
-            };
-            thread.start();
-            startWalkListening();
+//            new startDistList().execute();
+//            new startwalkList().execute();
+
+
+
+                  //  startDistanceListening();
+
+
+                    startWalkListening();
+
+
+
+
             ((Button) v).setText("Stop Session");
         }else{
             ((Button) v).setText("Stopping Session...");
@@ -151,8 +161,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             cal.setTime(now);
             stopTime = cal.getTimeInMillis();
 
-            unregisterFitnessDataListener(walkListener);
-            unregisterFitnessDataListener(distListener);
+            unregisterFitnessDataListener(mClient,walkListener);
+            unregisterFitnessDataListener(mClient,distListener);
             //        Log.i(TAG, "Inserting Session to HistoryAPI");
 //        SessionInsertRequest sessionReq = startSession();
 //        Log.i(TAG, "Inserting Session to HistoryAPI");
@@ -167,6 +177,20 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
 
 
+    }
+
+    private class startDistList extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... params) {
+            startDistanceListening();
+            return null;
+        }
+    }
+
+    private class startwalkList extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... params) {
+            startWalkListening();
+            return null;
+        }
     }
 
 
@@ -193,61 +217,99 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     public void startWalkListening(){
         Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
-                .setDataTypes(DataType.TYPE_STEP_COUNT_DELTA)
-                .setDataSourceTypes(DataSource.TYPE_DERIVED)
+                .setDataTypes(DataType.TYPE_STEP_COUNT_CUMULATIVE,DataType.TYPE_DISTANCE_CUMULATIVE)
+                .setDataSourceTypes(DataSource.TYPE_RAW)
                 .build())
                 .setResultCallback(new ResultCallback<DataSourcesResult>() {
                     @Override
                     public void onResult(DataSourcesResult dataSourcesResult) {
                         Log.i(TAG, "Result: " + dataSourcesResult.getStatus().toString());
+                        listeners.clear();
+                        dataSources.clear();
                         for (DataSource dataSource : dataSourcesResult.getDataSources()) {
+                            dataSources.add(dataSource);
+                            String fields = dataSource.getDataType().getFields().toString();
+                            Log.i(TAG, "Fields: " + fields);
                             Log.i(TAG, "Data source found: " + dataSource.toString());
                             Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
-                            if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA) && walkListener == null) {
-                                walkDataSource = dataSource;
-                                walkDataSet = DataSet.create(walkDataSource);
-                                Log.i(TAG, "Data source for TYPE_STEP_COUNT_DELTA found!  Registering.");
-                                walkListener = new OnDataPointListener() {
+
+                            final DataType dataType = dataSource.getDataType();
+
+                            if (dataType.equals(DataType.TYPE_STEP_COUNT_DELTA)||(dataType.equals(DataType.TYPE_DISTANCE_DELTA))) {
+//                                walkDataSource = dataSource;
+//
+//                                subscribe(mClient, walkDataSource);
+//                                walkDataSet = DataSet.create(walkDataSource);
+//                                Log.i(TAG, "Data source for TYPE_STEP_COUNT_DELTA found!  Registering.");
+                                final OnDataPointListener dpListener = new OnDataPointListener() {
                                     @Override
                                     public void onDataPoint(DataPoint dataPoint) {
-                                        for (Field field : dataPoint.getDataType().getFields()) {
-                                            Value val = dataPoint.getValue(field);
-                                            walkDataSet.add(dataPoint);
-                                            totalSteps += val.asInt();
-                                            Log.i(TAG, "Steps Registered " + val + "");
-                                        }
+                                        for (Field field : dataPoint.getDataType().getFields()){
+                                            Value value = dataPoint.getValue(field);
+                                            Log.i(TAG,"Field: "+field +", Value: "+value);
                                     }
-                                };
-
-//                                subscribe(walkDataSource);
+                                }
 
 
-                                Fitness.SensorsApi.add(mClient,
-                                        new SensorRequest.Builder()
-                                                .setDataSource(walkDataSource)
-                                                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                                                .build(), walkListener).setResultCallback(new ResultCallback<Status>() {
+
+
+//                                walkListener = new OnDataPointListener() {
+//                                    @Override
+//                                    public void onDataPoint(DataPoint dataPoint) {
+//                                        for (Field field : dataPoint.getDataType().getFields()) {
+//                                            final Value val = dataPoint.getValue(field);
+////                                            walkDataSet.add(dataPoint);
+//                                            totalSteps += val.asInt();
+//                                            Log.i(TAG, "Steps Registered " + val + "");
+//                                        }
+//                                    }
+//                                };
+
+
+//                                Fitness.SensorsApi.add(mClient,
+//                                        new SensorRequest.Builder()
+//                                                .setDataSource(walkDataSource)
+//                                                .setDataType(DataType.AGGREGATE_STEP_COUNT_DELTA)
+//                                                .build(), walkListener).setResultCallback(new ResultCallback<Status>() {
+//                                    @Override
+//                                    public void onResult(Status status) {
+//                                        if (status.isSuccess()) {
+//                                            Log.i(TAG, "Listener registered! (NEW)");
+//                                        } else {
+//                                            Log.i(TAG, "Listener not registered.(NEW)");
+//                                        }
+//                                    }
+//                                });
+
+                            } ;  //END STEP COUNT DELTA
+                                Fitness.SensorsApi.add(mClient,new SensorRequest.Builder()
+                                        .setDataSource(dataSource)
+                                        .setDataType(dataType)
+                                        .build(),dpListener)
+                                .setResultCallback(new ResultCallback<Status>() {
                                     @Override
-                                    public void onResult(Status status) {
-                                        if (status.isSuccess()) {
-                                            Log.i(TAG, "Listener registered! (NEW)");
-                                        } else {
-                                            Log.i(TAG, "Listener not registered.(NEW)");
+                                    public void onResult(@NonNull Status status) {
+                                        if(status.isSuccess()){
+                                            listeners.add(dpListener);
+                                            Log.i(TAG,"new Listener "+dataType.getName());
+                                        }else{
+                                            Log.i(TAG,"Failed to register listener for "+dataType.getName());
                                         }
                                     }
                                 });
 
-                            }   //END STEP COUNT DELTA
-                        }
                     }
-                });
-    }
+
+
+                }
+        }
+    });}
 
 
     private void startDistanceListening(){
         Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
                 .setDataTypes(DataType.TYPE_DISTANCE_DELTA)
-                .setDataSourceTypes(DataSource.TYPE_DERIVED)
+                .setDataSourceTypes(DataSource.TYPE_RAW)
                 .build())
                 .setResultCallback(new ResultCallback<DataSourcesResult>() {
                     @Override
@@ -258,12 +320,14 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                             Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
                             if (dataSource.getDataType().equals(DataType.TYPE_DISTANCE_DELTA) && distListener == null) {
                                 distDataSource = dataSource;
+
+                                subscribe(mClient,distDataSource);
                                 Log.i(TAG, "Data source for DISTANCE found!  Registering.");
                                 distListener = new OnDataPointListener() {
                                     @Override
                                     public void onDataPoint(DataPoint dataPoint) {
                                         for (Field field : dataPoint.getDataType().getFields()) {
-                                            Value val = dataPoint.getValue(field);
+                                            final Value val = dataPoint.getValue(field);
                                             Log.i(TAG, "DISTANCE VALUE (!!!) " + val + "");
                                         }
                                     }
@@ -292,8 +356,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
 
 
-    public void subscribe(DataSource dataSource){
-        Fitness.RecordingApi.subscribe(mClient, dataSource.getDataType())
+    public void subscribe(GoogleApiClient client,DataSource dataSource){
+        Fitness.RecordingApi.subscribe(client, dataSource.getDataType())
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
@@ -325,11 +389,11 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 });
     }
 
-    private void cancelSubscription(DataType type){
+    private void cancelSubscription(GoogleApiClient client,DataType type){
         final DataType t = type;
         Log.i(TAG,"Unsubscribing from data type: "+t);
 
-        Fitness.RecordingApi.unsubscribe(mClient, DataType.TYPE_STEP_COUNT_DELTA)
+        Fitness.RecordingApi.unsubscribe(client, type)
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
@@ -661,6 +725,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         // them, the app will start working.
         buildFitnessClient();
 
+
     }
     // [END auth_oncreate_setup]
 
@@ -820,7 +885,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     /**
      * Unregister the listener with the Sensors API.
      */
-    private void unregisterFitnessDataListener(OnDataPointListener listener) {
+    private void unregisterFitnessDataListener(GoogleApiClient client,OnDataPointListener listener) {
         if (listener == null) {
             // This code only activates one listener at a time.  If there's no listener, there's
             // nothing to unregister.
@@ -832,7 +897,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 //         even if called from within onStop, but a callback can still be added in order to
 //         inspect the results.
         Fitness.SensorsApi.remove(
-                mClient,
+                client,
                 listener)
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
@@ -912,7 +977,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_unregister_listener) {
-            unregisterFitnessDataListener(walkListener);
+            unregisterFitnessDataListener(mClient,walkListener);
             return true;
         }
         if(id == R.id.action_update_data){
@@ -930,7 +995,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
 
         if (id == R.id.action_cancel_subs) {
-            cancelSubscription(DataType.TYPE_STEP_COUNT_DELTA);
+            cancelSubscription(mClient,DataType.AGGREGATE_STEP_COUNT_DELTA);
+            cancelSubscription(mClient,DataType.AGGREGATE_DISTANCE_DELTA);
             return true;
         }
 
@@ -1022,6 +1088,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted.
                 buildFitnessClient();
+
             } else {
                 // Permission denied.
 
