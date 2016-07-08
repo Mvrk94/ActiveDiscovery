@@ -23,20 +23,24 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.renderscript.Element;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
@@ -47,6 +51,7 @@ import com.google.android.gms.fit.samples.common.logger.MessageOnlyLogFilter;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessActivities;
 import com.google.android.gms.fitness.FitnessStatusCodes;
+import com.google.android.gms.fitness.SessionsApi;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
@@ -81,6 +86,8 @@ import java.util.concurrent.TimeUnit;
  * demonstrates how to authenticate a user with Google Play Services.
  */
 public class MainActivity extends AppCompatActivity implements ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    public Button btnSession;
+
     public static final String TAG = "BasicSensorsApi";
     public static final String SAMPLE_SESSION_NAME = "Afternoon run";
 
@@ -94,39 +101,199 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     // [START mListener_variable_reference]
     // Need to hold a reference to this listener, as it's passed into the "unregister"
     // method in order to stop all sensors from sending data to this listener.
-    private static OnDataPointListener mListener;
-    // [END mListener_variable_reference]
+//    private static OnDataPointListener mListener;
+    private static int totalSteps = 0;
+    private static OnDataPointListener walkListener;
+    private static OnDataPointListener distListener;
+    private static DataSource walkDataSource;
+    private static DataSource distDataSource;
+    private DataSet walkDataSet;
+    private Session session;
+    private long startTime;
+    private long stopTime;
 
+    private boolean hasWorkoutStarted = false;
 
-    // [START auth_oncreate_setup]
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Put application specific code here.
-
         setContentView(R.layout.activity_main);
-
-
-        Toast.makeText(MainActivity.this, "Connected",
-                Toast.LENGTH_LONG).show();
-
-
-        // This method sets up our custom logger, which will print all log messages to the device
-        // screen, as well as to adb logcat.
         initializeLogging();
-
-
-        // When permissions are revoked the app is restarted so onCreate is sufficient to check for
-        // permissions core to the Activity's functionality.
         if (!checkPermissions()) {
             requestPermissions();
-
-
         }
     }
 
-    public void subscribe(){
-        Fitness.RecordingApi.subscribe(mClient,DataType.TYPE_STEP_COUNT_DELTA)
+    public void btnWalkClicked(View v) {
+       Button btnSession = (Button) v;
+        if(hasWorkoutStarted == false){
+            ((Button) v).setText("Session Started...");
+            hasWorkoutStarted = true;
+            Calendar cal = Calendar.getInstance();
+            Date now = new Date();
+            cal.setTime(now);
+            startTime = cal.getTimeInMillis();
+            Thread thread = new Thread(){
+                public void run(){
+                    Log.i(TAG, "NEW TREAD STARTING------------------------------------------------------------------------------------------");
+                    startDistanceListening();
+                    Log.i(TAG, "NEW TREAD STOPING------------------------------------------------------------------------------------------");
+                }
+            };
+            thread.start();
+            startWalkListening();
+            ((Button) v).setText("Stop Session");
+        }else{
+            ((Button) v).setText("Stopping Session...");
+            hasWorkoutStarted = false;
+            Calendar cal = Calendar.getInstance();
+            Date now = new Date();
+            cal.setTime(now);
+            stopTime = cal.getTimeInMillis();
+
+            unregisterFitnessDataListener(walkListener);
+            unregisterFitnessDataListener(distListener);
+            //        Log.i(TAG, "Inserting Session to HistoryAPI");
+//        SessionInsertRequest sessionReq = startSession();
+//        Log.i(TAG, "Inserting Session to HistoryAPI");
+//        Status insertStatus = Fitness.SessionsApi.insertSession(mClient,sessionReq).await(1, TimeUnit.MINUTES);
+//        if(!insertStatus.isSuccess()){
+//            Log.i(TAG, "There was a problem inserting the session: " + insertStatus.getStatusMessage());
+//        }
+//        Log.i(TAG, "Session insert was Successful");
+//            cancelSubscription(DataType.TYPE_STEP_COUNT_DELTA);
+            Log.i(TAG, "Total Steps: " + totalSteps + "");
+            ((Button) v).setText("Start Session");
+        }
+
+
+    }
+
+
+
+
+//    public SessionInsertRequest startSession(){
+//
+//        session = new Session.Builder()
+//                .setName("WalkSession")
+//                .setDescription("Walking Workout - walking around the block")
+//                .setIdentifier("1668521")
+//                .setActivity(FitnessActivities.WALKING)
+//                .setStartTime(startTime, TimeUnit.MILLISECONDS)
+//                .setEndTime(stopTime, TimeUnit.MILLISECONDS)
+//                .build();
+//
+//        SessionInsertRequest sessionReq = new SessionInsertRequest.Builder()
+//                .setSession(session)
+//                .addDataSet(walkDataSet)
+//                .build();
+//
+//        return sessionReq;
+//    }
+
+    public void startWalkListening(){
+        Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
+                .setDataTypes(DataType.TYPE_STEP_COUNT_DELTA)
+                .setDataSourceTypes(DataSource.TYPE_DERIVED)
+                .build())
+                .setResultCallback(new ResultCallback<DataSourcesResult>() {
+                    @Override
+                    public void onResult(DataSourcesResult dataSourcesResult) {
+                        Log.i(TAG, "Result: " + dataSourcesResult.getStatus().toString());
+                        for (DataSource dataSource : dataSourcesResult.getDataSources()) {
+                            Log.i(TAG, "Data source found: " + dataSource.toString());
+                            Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
+                            if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA) && walkListener == null) {
+                                walkDataSource = dataSource;
+                                walkDataSet = DataSet.create(walkDataSource);
+                                Log.i(TAG, "Data source for TYPE_STEP_COUNT_DELTA found!  Registering.");
+                                walkListener = new OnDataPointListener() {
+                                    @Override
+                                    public void onDataPoint(DataPoint dataPoint) {
+                                        for (Field field : dataPoint.getDataType().getFields()) {
+                                            Value val = dataPoint.getValue(field);
+                                            walkDataSet.add(dataPoint);
+                                            totalSteps += val.asInt();
+                                            Log.i(TAG, "Steps Registered " + val + "");
+                                        }
+                                    }
+                                };
+
+//                                subscribe(walkDataSource);
+
+
+                                Fitness.SensorsApi.add(mClient,
+                                        new SensorRequest.Builder()
+                                                .setDataSource(walkDataSource)
+                                                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                                                .build(), walkListener).setResultCallback(new ResultCallback<Status>() {
+                                    @Override
+                                    public void onResult(Status status) {
+                                        if (status.isSuccess()) {
+                                            Log.i(TAG, "Listener registered! (NEW)");
+                                        } else {
+                                            Log.i(TAG, "Listener not registered.(NEW)");
+                                        }
+                                    }
+                                });
+
+                            }   //END STEP COUNT DELTA
+                        }
+                    }
+                });
+    }
+
+
+    private void startDistanceListening(){
+        Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
+                .setDataTypes(DataType.TYPE_DISTANCE_DELTA)
+                .setDataSourceTypes(DataSource.TYPE_DERIVED)
+                .build())
+                .setResultCallback(new ResultCallback<DataSourcesResult>() {
+                    @Override
+                    public void onResult(DataSourcesResult dataSourcesResult) {
+                        Log.i(TAG, "Result: " + dataSourcesResult.getStatus().toString());
+                        for (DataSource dataSource : dataSourcesResult.getDataSources()) {
+                            Log.i(TAG, "Data source found: " + dataSource.toString());
+                            Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
+                            if (dataSource.getDataType().equals(DataType.TYPE_DISTANCE_DELTA) && distListener == null) {
+                                distDataSource = dataSource;
+                                Log.i(TAG, "Data source for DISTANCE found!  Registering.");
+                                distListener = new OnDataPointListener() {
+                                    @Override
+                                    public void onDataPoint(DataPoint dataPoint) {
+                                        for (Field field : dataPoint.getDataType().getFields()) {
+                                            Value val = dataPoint.getValue(field);
+                                            Log.i(TAG, "DISTANCE VALUE (!!!) " + val + "");
+                                        }
+                                    }
+                                };
+                                Fitness.SensorsApi.add(mClient,
+                                        new SensorRequest.Builder()
+                                                .setDataSource(distDataSource)
+                                                .setDataType(DataType.TYPE_DISTANCE_DELTA)
+                                                .build(), distListener).setResultCallback(new ResultCallback<Status>() {
+                                    @Override
+                                    public void onResult(Status status) {
+                                        if (status.isSuccess()) {
+                                            Log.i(TAG, "DISTANCE Listener registered!");
+                                        } else {
+                                            Log.i(TAG, "Distance Listener not registered.(NEW)");
+                                        }
+                                    }
+                                });
+
+                            }   //END STEP COUNT DELTA
+                        }
+                    }
+                });
+    }
+
+
+
+
+    public void subscribe(DataSource dataSource){
+        Fitness.RecordingApi.subscribe(mClient, dataSource.getDataType())
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
@@ -158,26 +325,30 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 });
     }
 
-    private void cancelSubscription(){
-        final String dataTypeStr = DataType.TYPE_STEP_COUNT_DELTA.toString();
-        Log.i(TAG,"Unsubscribing from data type: "+dataTypeStr);
+    private void cancelSubscription(DataType type){
+        final DataType t = type;
+        Log.i(TAG,"Unsubscribing from data type: "+t);
 
         Fitness.RecordingApi.unsubscribe(mClient, DataType.TYPE_STEP_COUNT_DELTA)
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
                         if(status.isSuccess()){
-                            Log.i(TAG,"Successfully unsubscribed for data type: "+dataTypeStr);
+                            Log.i(TAG,"Successfully unsubscribed for data type: "+t);
                         }else{
-                            Log.i(TAG,"Failed to unsubscribe for data type: "+dataTypeStr);
+                            Log.i(TAG,"Failed to unsubscribe for data type: "+t);
                         }
                     }
                 });
     }
 
+
     private class InsertAndVerifySessionTask extends AsyncTask<Void, Void, Void> {
+
         protected Void doInBackground(Void... params) {
             //First, create a new session and an insertion request.
+
+
 
             SessionInsertRequest insertRequest = insertFitnessSession();
 
@@ -236,147 +407,151 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     }
 
     private SessionInsertRequest insertFitnessSession() {
-        Log.i(TAG, "Creating a new session for an afternoon run");
-        // Setting start and end times for our run.
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        // Set a range of the run, using a start time of 30 minutes before this moment,
-        // with a 10-minute walk in the middle.
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.MINUTE, -10);
-        long endWalkTime = cal.getTimeInMillis();
-        cal.add(Calendar.MINUTE, -10);
-        long startWalkTime = cal.getTimeInMillis();
-        cal.add(Calendar.MINUTE, -10);
-        long startTime = cal.getTimeInMillis();
-
-        // Create a data source
-        DataSource speedDataSource = new DataSource.Builder()
-                .setAppPackageName(this.getPackageName())
-                .setDataType(DataType.TYPE_SPEED)
-                .setName(SAMPLE_SESSION_NAME + "- speed")
-                .setType(DataSource.TYPE_RAW)
-                .build();
-
-        float runSpeedMps = 10;
-        float walkSpeedMps = 3;
-        // Create a data set of the run speeds to include in the session.
-        DataSet speedDataSet = DataSet.create(speedDataSource);
-
-        DataPoint firstRunSpeed = speedDataSet.createDataPoint()
-                .setTimeInterval(startTime, startWalkTime, TimeUnit.MILLISECONDS);
-        firstRunSpeed.getValue(Field.FIELD_SPEED).setFloat(runSpeedMps);
-        speedDataSet.add(firstRunSpeed);
-
-        DataPoint walkSpeed = speedDataSet.createDataPoint()
-                .setTimeInterval(startWalkTime, endWalkTime, TimeUnit.MILLISECONDS);
-        walkSpeed.getValue(Field.FIELD_SPEED).setFloat(walkSpeedMps);
-        speedDataSet.add(walkSpeed);
-
-        DataPoint secondRunSpeed = speedDataSet.createDataPoint()
-                .setTimeInterval(endWalkTime, endTime, TimeUnit.MILLISECONDS);
-        secondRunSpeed.getValue(Field.FIELD_SPEED).setFloat(runSpeedMps);
-        speedDataSet.add(secondRunSpeed);
-
-        // [START build_insert_session_request_with_activity_segments]
-        // Create a second DataSet of ActivitySegments to indicate the runner took a 10-minute walk
-        // in the middle of the run.
-        DataSource activitySegmentDataSource = new DataSource.Builder()
-                .setAppPackageName(this.getPackageName())
-                .setDataType(DataType.TYPE_ACTIVITY_SEGMENT)
-                .setName(SAMPLE_SESSION_NAME + "-activity segments")
-                .setType(DataSource.TYPE_RAW)
-                .build();
-        DataSet activitySegments = DataSet.create(activitySegmentDataSource);
-
-        DataPoint firstRunningDp = activitySegments.createDataPoint()
-                .setTimeInterval(startTime, startWalkTime, TimeUnit.MILLISECONDS);
-        firstRunningDp.getValue(Field.FIELD_ACTIVITY).setActivity(FitnessActivities.RUNNING);
-        activitySegments.add(firstRunningDp);
-
-        DataPoint walkingDp = activitySegments.createDataPoint()
-                .setTimeInterval(startWalkTime, endWalkTime, TimeUnit.MILLISECONDS);
-        walkingDp.getValue(Field.FIELD_ACTIVITY).setActivity(FitnessActivities.WALKING);
-        activitySegments.add(walkingDp);
-
-        DataPoint secondRunningDp = activitySegments.createDataPoint()
-                .setTimeInterval(endWalkTime, endTime, TimeUnit.MILLISECONDS);
-        secondRunningDp.getValue(Field.FIELD_ACTIVITY).setActivity(FitnessActivities.RUNNING);
-        activitySegments.add(secondRunningDp);
-
-        // [START build_insert_session_request]
-        // Create a session with metadata about the activity.
-        Session session = new Session.Builder()
-                .setName(SAMPLE_SESSION_NAME)
-                .setDescription("Long run around Shoreline Park")
-                .setIdentifier("UniqueIdentifierHere")
-                .setActivity(FitnessActivities.RUNNING)
-                .setStartTime(startTime, TimeUnit.MILLISECONDS)
-                .setEndTime(endTime, TimeUnit.MILLISECONDS)
-                .build();
-
-        // Build a session insert request
-        SessionInsertRequest insertRequest = new SessionInsertRequest.Builder()
-                .setSession(session)
-                .addDataSet(speedDataSet)
-                .addDataSet(activitySegments)
-                .build();
-        // [END build_insert_session_request]
-        // [END build_insert_session_request_with_activity_segments]
-
-        return insertRequest;
+//        Log.i(TAG, "Creating a new session for an afternoon run");
+//        // Setting start and end times for our run.
+//        Calendar cal = Calendar.getInstance();
+//        Date now = new Date();
+//        cal.setTime(now);
+//        // Set a range of the run, using a start time of 30 minutes before this moment,
+//        // with a 10-minute walk in the middle.
+//        long endTime = cal.getTimeInMillis();
+//        cal.add(Calendar.MINUTE, -10);
+//        long endWalkTime = cal.getTimeInMillis();
+//        cal.add(Calendar.MINUTE, -10);
+//        long startWalkTime = cal.getTimeInMillis();
+//        cal.add(Calendar.MINUTE, -10);
+//        long startTime = cal.getTimeInMillis();
+//
+//        // Create a data source
+//        DataSource speedDataSource = new DataSource.Builder()
+//                .setAppPackageName(this.getPackageName())
+//                .setDataType(DataType.TYPE_SPEED)
+//                .setName(SAMPLE_SESSION_NAME + "- speed")
+//                .setType(DataSource.TYPE_RAW)
+//                .build();
+//
+//        float runSpeedMps = 10;
+//        float walkSpeedMps = 3;
+//        // Create a data set of the run speeds to include in the session.
+//        DataSet speedDataSet = DataSet.create(speedDataSource);
+//
+//        DataPoint firstRunSpeed = speedDataSet.createDataPoint()
+//                .setTimeInterval(startTime, startWalkTime, TimeUnit.MILLISECONDS);
+//        firstRunSpeed.getValue(Field.FIELD_SPEED).setFloat(runSpeedMps);
+//        speedDataSet.add(firstRunSpeed);
+//
+//        DataPoint walkSpeed = speedDataSet.createDataPoint()
+//                .setTimeInterval(startWalkTime, endWalkTime, TimeUnit.MILLISECONDS);
+//        walkSpeed.getValue(Field.FIELD_SPEED).setFloat(walkSpeedMps);
+//        speedDataSet.add(walkSpeed);
+//
+//        DataPoint secondRunSpeed = speedDataSet.createDataPoint()
+//                .setTimeInterval(endWalkTime, endTime, TimeUnit.MILLISECONDS);
+//        secondRunSpeed.getValue(Field.FIELD_SPEED).setFloat(runSpeedMps);
+//        speedDataSet.add(secondRunSpeed);
+//
+//        // [START build_insert_session_request_with_activity_segments]
+//        // Create a second DataSet of ActivitySegments to indicate the runner took a 10-minute walk
+//        // in the middle of the run.
+//        DataSource activitySegmentDataSource = new DataSource.Builder()
+//                .setAppPackageName(this.getPackageName())
+//                .setDataType(DataType.TYPE_ACTIVITY_SEGMENT)
+//                .setName(SAMPLE_SESSION_NAME + "-activity segments")
+//                .setType(DataSource.TYPE_RAW)
+//                .build();
+//        DataSet activitySegments = DataSet.create(activitySegmentDataSource);
+//
+//        DataPoint firstRunningDp = activitySegments.createDataPoint()
+//                .setTimeInterval(startTime, startWalkTime, TimeUnit.MILLISECONDS);
+//        firstRunningDp.getValue(Field.FIELD_ACTIVITY).setActivity(FitnessActivities.RUNNING);
+//        activitySegments.add(firstRunningDp);
+//
+//        DataPoint walkingDp = activitySegments.createDataPoint()
+//                .setTimeInterval(startWalkTime, endWalkTime, TimeUnit.MILLISECONDS);
+//        walkingDp.getValue(Field.FIELD_ACTIVITY).setActivity(FitnessActivities.WALKING);
+//        activitySegments.add(walkingDp);
+//
+//        DataPoint secondRunningDp = activitySegments.createDataPoint()
+//                .setTimeInterval(endWalkTime, endTime, TimeUnit.MILLISECONDS);
+//        secondRunningDp.getValue(Field.FIELD_ACTIVITY).setActivity(FitnessActivities.RUNNING);
+//        activitySegments.add(secondRunningDp);
+//
+//        // [START build_insert_session_request]
+//        // Create a session with metadata about the activity.
+//        Session session = new Session.Builder()
+//                .setName(SAMPLE_SESSION_NAME)
+//                .setDescription("Long run around Shoreline Park")
+//                .setIdentifier("UniqueIdentifierHere")
+//                .setActivity(FitnessActivities.RUNNING)
+//                .setStartTime(startTime, TimeUnit.MILLISECONDS)
+//                .setEndTime(endTime, TimeUnit.MILLISECONDS)
+//                .build();
+//
+//
+//        // Build a session insert request
+//        SessionInsertRequest insertRequest = new SessionInsertRequest.Builder()
+//                .setSession(session)
+//                .addDataSet(speedDataSet)
+//                .addDataSet(activitySegments)
+//                .build();
+//        // [END build_insert_session_request]
+//        // [END build_insert_session_request_with_activity_segments]
+//
+//        return insertRequest;
+        return null;
     }
 
     private DataSet insertFitnessData(){
-        Log.i(TAG, "Creating a new data insert request.");
-
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.HOUR_OF_DAY, -1);
-        long startTime = cal.getTimeInMillis();
-
-        DataSource dataSource = new DataSource.Builder()
-                .setAppPackageName(this)
-                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                .setStreamName(TAG + "-step count")
-                .setType(DataSource.TYPE_RAW)
-                .build();
-
-        int stepCountDelta = 950;
-        DataSet dataSet = DataSet.create(dataSource);
-
-        DataPoint dataPoint = dataSet.createDataPoint()
-                .setTimeInterval(startTime,endTime,TimeUnit.MILLISECONDS);
-        dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
-
-        dataSet.add(dataPoint);
-
-        return dataSet;
+//        Log.i(TAG, "Creating a new data insert request.");
+//
+//        Calendar cal = Calendar.getInstance();
+//        Date now = new Date();
+//        cal.setTime(now);
+//        long endTime = cal.getTimeInMillis();
+//        cal.add(Calendar.HOUR_OF_DAY, -1);
+//        long startTime = cal.getTimeInMillis();
+//
+//        DataSource dataSource = new DataSource.Builder()
+//                .setAppPackageName(this)
+//                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+//                .setStreamName(TAG + "-step count")
+//                .setType(DataSource.TYPE_RAW)
+//                .build();
+//
+//        int stepCountDelta = 950;
+//        DataSet dataSet = DataSet.create(dataSource);
+//
+//        DataPoint dataPoint = dataSet.createDataPoint()
+//                .setTimeInterval(startTime,endTime,TimeUnit.MILLISECONDS);
+//        dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
+//
+//        dataSet.add(dataPoint);
+//
+//        return dataSet;
+        return null;
 
     }
 
     public static DataReadRequest queryFitnessData(){
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.WEEK_OF_YEAR,-1);
-        long startTime = cal.getTimeInMillis();
-
-        java.text.DateFormat dateFormat = DateFormat.getDateInstance();
-        Log.i(TAG, "Range Start: " + dateFormat.format(startTime));
-        Log.i(TAG, "Range End: " + dateFormat.format(endTime));
-
-        DataReadRequest readRequest = new DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_STEP_COUNT_DELTA,DataType.AGGREGATE_STEP_COUNT_DELTA)
-                .bucketByTime(1,TimeUnit.DAYS)
-                .setTimeRange(startTime,endTime,TimeUnit.MILLISECONDS)
-                .build();
-
-        return readRequest;
+//        Calendar cal = Calendar.getInstance();
+//        Date now = new Date();
+//        cal.setTime(now);
+//        long endTime = cal.getTimeInMillis();
+//        cal.add(Calendar.WEEK_OF_YEAR,-1);
+//        long startTime = cal.getTimeInMillis();
+//
+//        java.text.DateFormat dateFormat = DateFormat.getDateInstance();
+//        Log.i(TAG, "Range Start: " + dateFormat.format(startTime));
+//        Log.i(TAG, "Range End: " + dateFormat.format(endTime));
+//
+//        DataReadRequest readRequest = new DataReadRequest.Builder()
+//                .aggregate(DataType.TYPE_STEP_COUNT_DELTA,DataType.AGGREGATE_STEP_COUNT_DELTA)
+//                .bucketByTime(1,TimeUnit.DAYS)
+//                .setTimeRange(startTime,endTime,TimeUnit.MILLISECONDS)
+//                .build();
+//
+//        return readRequest;
+        return null;
 
     }
 
@@ -449,7 +624,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         // Create a delete request object, providing a data type and a time interval
         DataDeleteRequest request = new DataDeleteRequest.Builder()
                 .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                .addDataType(DataType.TYPE_SPEED)
+                .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
                 .deleteAllSessions() // Or specify a particular session here
                 .build();
 
@@ -515,9 +690,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                                 public void onConnected(Bundle bundle) {
                                     Log.i(TAG, "Connected!!!");
                                     // Now you can make calls to the Fitness APIs.
-                                    findFitnessDataSources();
-                                    subscribe();
-                                    new InsertAndVerifySessionTask().execute();
+//                                    findFitnessDataSources();
+//                                    subscribe();
+//                                    new InsertAndVerifySessionTask().execute();
                                 }
 
                                 @Override
@@ -566,37 +741,37 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private void findFitnessDataSources() {
         // [START find_data_sources]
         // Note: Fitness.SensorsApi.findDataSources() requires the ACCESS_FINE_LOCATION permission.
-        Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
-                .setDataTypes(DataType.TYPE_STEP_COUNT_CADENCE)
-                .setDataTypes(DataType.TYPE_STEP_COUNT_CUMULATIVE)
-                .setDataTypes(DataType.TYPE_STEP_COUNT_DELTA)
-                        // Can specify whether data type is raw or derived.
-                .setDataSourceTypes(DataSource.TYPE_DERIVED)
-                .build())
-                .setResultCallback(new ResultCallback<DataSourcesResult>() {
-                    @Override
-                    public void onResult(DataSourcesResult dataSourcesResult) {
-                        Log.i(TAG, "Result: " + dataSourcesResult.getStatus().toString());
-                        for (DataSource dataSource : dataSourcesResult.getDataSources()) {
-                            Log.i(TAG, "Data source found: " + dataSource.toString());
-                            Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
-
-                            //Let's register a listener to receive Activity data!
-                            if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_CADENCE) && mListener == null) {
-                                Log.i(TAG, "Data source for TYPE_STEP_COUNT_CADENCE found!  Registering.");
-                                registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_CADENCE);
-                            } else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_CUMULATIVE) && mListener == null) {
-                                Log.i(TAG, "Data source for TYPE_STEP_COUNT_CUMULATIVE found!  Registering.");
-                                registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_CUMULATIVE);
-                            }  else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA) && mListener == null) {
-
-                                Log.i(TAG, "Data source for TYPE_STEP_COUNT_DELTA found!  Registering.");
-                                registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_DELTA);
-
-                            }   //END STEP COUNT DELTA
-                        }
-                    }
-                });
+//        Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
+//                .setDataTypes(DataType.TYPE_STEP_COUNT_CADENCE)
+//                .setDataTypes(DataType.TYPE_STEP_COUNT_CUMULATIVE)
+//                .setDataTypes(DataType.TYPE_STEP_COUNT_DELTA)
+//                        // Can specify whether data type is raw or derived.
+//                .setDataSourceTypes(DataSource.TYPE_DERIVED)
+//                .build())
+//                .setResultCallback(new ResultCallback<DataSourcesResult>() {
+//                    @Override
+//                    public void onResult(DataSourcesResult dataSourcesResult) {
+//                        Log.i(TAG, "Result: " + dataSourcesResult.getStatus().toString());
+//                        for (DataSource dataSource : dataSourcesResult.getDataSources()) {
+//                            Log.i(TAG, "Data source found: " + dataSource.toString());
+//                            Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
+//
+//                            //Let's register a listener to receive Activity data!
+//                            if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_CADENCE) && mListener == null) {
+//                                Log.i(TAG, "Data source for TYPE_STEP_COUNT_CADENCE found!  Registering.");
+//                                registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_CADENCE);
+//                            } else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_CUMULATIVE) && mListener == null) {
+//                                Log.i(TAG, "Data source for TYPE_STEP_COUNT_CUMULATIVE found!  Registering.");
+//                                registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_CUMULATIVE);
+//                            }  else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA) && mListener == null) {
+//
+//                                Log.i(TAG, "Data source for TYPE_STEP_COUNT_DELTA found!  Registering.");
+//                                registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_DELTA);
+//
+//                            }   //END STEP COUNT DELTA
+//                        }
+//                    }
+//                });
 
     }
 
@@ -610,55 +785,55 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
      */
     private void registerFitnessDataListener(DataSource dataSource, DataType dataType) {
         // [START register_data_listener]
-        mListener = new OnDataPointListener() {
-            @Override
-            public void onDataPoint(DataPoint dataPoint) {
-                for (Field field : dataPoint.getDataType().getFields()) {
-                    Value val = dataPoint.getValue(field);
-                    Log.i(TAG, "Detected DataPoint field: " + field.getName());
-                    Log.i(TAG, "Detected DataPoint value: " + val);
-                }
-            }
-        };
+//        mListener = new OnDataPointListener() {
+//            @Override
+//            public void onDataPoint(DataPoint dataPoint) {
+//                for (Field field : dataPoint.getDataType().getFields()) {
+//                    Value val = dataPoint.getValue(field);
+//                    Log.i(TAG, "Detected DataPoint field: " + field.getName());
+//                    Log.i(TAG, "Detected DataPoint value: " + val);
+//                }
+//            }
+//        };
 
-        Fitness.SensorsApi.add(
-                mClient,
-                new SensorRequest.Builder()
-                        .setDataSource(dataSource) // Optional but recommended for custom data sets.
-                        .setDataType(dataType) // Can't be omitted.
-                        .setSamplingRate(10, TimeUnit.SECONDS)
-                        .build(),
-                mListener)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(TAG, "Listener registered!");
-                        } else {
-                            Log.i(TAG, "Listener not registered.");
-                        }
-                    }
-                });
+//        Fitness.SensorsApi.add(
+//                mClient,
+//                new SensorRequest.Builder()
+//                        .setDataSource(dataSource) // Optional but recommended for custom data sets.
+//                        .setDataType(dataType) // Can't be omitted.
+//                        .setSamplingRate(10, TimeUnit.SECONDS)
+//                        .build(),
+//                mListener)
+//                .setResultCallback(new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(Status status) {
+//                        if (status.isSuccess()) {
+//                            Log.i(TAG, "Listener registered!");
+//                        } else {
+//                            Log.i(TAG, "Listener not registered.");
+//                        }
+//                    }
+//                });
         // [END register_data_listener]
     }
 
     /**
      * Unregister the listener with the Sensors API.
      */
-    private void unregisterFitnessDataListener() {
-        if (mListener == null) {
+    private void unregisterFitnessDataListener(OnDataPointListener listener) {
+        if (listener == null) {
             // This code only activates one listener at a time.  If there's no listener, there's
             // nothing to unregister.
             return;
         }
 
-        // [START unregister_data_listener]
-        // Waiting isn't actually necessary as the unregister call will complete regardless,
-        // even if called from within onStop, but a callback can still be added in order to
-        // inspect the results.
+//         [START unregister_data_listener]
+//         Waiting isn't actually necessary as the unregister call will complete regardless,
+//         even if called from within onStop, but a callback can still be added in order to
+//         inspect the results.
         Fitness.SensorsApi.remove(
                 mClient,
-                mListener)
+                listener)
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
@@ -673,38 +848,38 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     }
 
     private void deleteData(){
-        Log.i(TAG, "Deleting today's step count data.");
-
-        // [START delete_dataset]
-        // Set a start and end time for our data, using a start time of 1 day before this moment.
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.DAY_OF_YEAR, -1);
-        long startTime = cal.getTimeInMillis();
-
-        //  Create a delete request object, providing a data type and a time interval
-        DataDeleteRequest request = new DataDeleteRequest.Builder()
-                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                .build();
-
-        // Invoke the History API with the Google API client object and delete request, and then
-        // specify a callback that will check the result.
-        Fitness.HistoryApi.deleteData(mClient, request)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(TAG, "Successfully deleted today's step count data.");
-                        } else {
-                            // The deletion will fail if the requesting app tries to delete data
-                            // that it did not insert.
-                            Log.i(TAG, "Failed to delete today's step count data.");
-                        }
-                    }
-                });
+//        Log.i(TAG, "Deleting today's step count data.");
+//
+//        // [START delete_dataset]
+//        // Set a start and end time for our data, using a start time of 1 day before this moment.
+//        Calendar cal = Calendar.getInstance();
+//        Date now = new Date();
+//        cal.setTime(now);
+//        long endTime = cal.getTimeInMillis();
+//        cal.add(Calendar.DAY_OF_YEAR, -1);
+//        long startTime = cal.getTimeInMillis();
+//
+//        //  Create a delete request object, providing a data type and a time interval
+//        DataDeleteRequest request = new DataDeleteRequest.Builder()
+//                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+//                .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
+//                .build();
+//
+//        // Invoke the History API with the Google API client object and delete request, and then
+//        // specify a callback that will check the result.
+//        Fitness.HistoryApi.deleteData(mClient, request)
+//                .setResultCallback(new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(Status status) {
+//                        if (status.isSuccess()) {
+//                            Log.i(TAG, "Successfully deleted today's step count data.");
+//                        } else {
+//                            // The deletion will fail if the requesting app tries to delete data
+//                            // that it did not insert.
+//                            Log.i(TAG, "Failed to delete today's step count data.");
+//                        }
+//                    }
+//                });
         // [END delete_dataset]
     }
 
@@ -737,7 +912,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_unregister_listener) {
-            unregisterFitnessDataListener();
+            unregisterFitnessDataListener(walkListener);
             return true;
         }
         if(id == R.id.action_update_data){
@@ -755,7 +930,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
 
         if (id == R.id.action_cancel_subs) {
-            cancelSubscription();
+            cancelSubscription(DataType.TYPE_STEP_COUNT_DELTA);
             return true;
         }
 

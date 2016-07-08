@@ -31,12 +31,26 @@ limitations under the License.
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/title_text_view">
+        android:layout_below="@id/title_text_view"
+        android:id="@+id/scrollView"
+        android:layout_alignRight="@+id/title_text_view"
+        android:layout_alignEnd="@+id/title_text_view"
+        android:layout_above="@+id/btnWalk">
         <com.google.android.gms.fit.samples.common.logger.LogView
             android:id="@+id/sample_logview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scrollbars="vertical" />
     </ScrollView>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Walk"
+        android:id="@+id/btnWalk"
+        android:onClick="btnWalkClicked"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
 

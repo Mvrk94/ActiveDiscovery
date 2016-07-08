@@ -29,4 +29,5 @@ limitations under the License.
     <string name="action_cancel_subs">Cancel Subscriptions</string>
     <string name="action_delete_session">Delete session</string>
     <string name="ok">OK</string>
+    <string name="btnSession">StartSession</string>
 </resources>
