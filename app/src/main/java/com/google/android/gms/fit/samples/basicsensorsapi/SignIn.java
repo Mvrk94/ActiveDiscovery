@@ -115,8 +115,10 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
             GoogleSignInAccount acct = result.getSignInAccount();
 
             //go to the tabbed view
-            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            updateUI(true);
+            startActivity(new Intent(this,TabbedActivity.class));
+
+          //  mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+            //updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
