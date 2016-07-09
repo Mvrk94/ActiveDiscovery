@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue_grey_500">#607D8B</color>
+    <color name="blue_grey_600">#546E7A</color>
+    <color name="blue_grey_700">#455A64</color>
+    <color name="blue_grey_800">#37474F</color>
+    <color name="blue_grey_900">#263238</color>
+
+    <color name="royal_blue">#4169E1</color>
+    <color name="steel_blue">#4682B4</color>
+    <color name="corn_flower_blue">#6495ED</color>
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000</color>
+
+    <!--To use with Logo/Color Scheme-->
+    <color name="light_sea_blue">#62D8FF</color>
+    <color name="bright_sea_blue">#00AFE3</color>
+    <color name="dark_blue">#04217F</color>
+
+    <color name="light_grey">#D3D3D3</color>
+
+
+    #F5630D
+    <!--Additional colors in the logo-->
+    <color name="berry">#C82C6B</color>
+    <color name="purple">#7A3285</color>
+    <color name="dark_green">#0D6E11</color>
+    <color name="bright_orange"> #F5630D</color>
+
+    <color name="orange">#FA0</color>
+
+</resources>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright 2014 Google, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <resources>
-    <string name="app_name">ActiveDiscovery</string>
+    <string name="signed_in_fmt">Signed in as: %s</string>
+
+    <string name="sign_out">Sign Out</string>
+
+    <string name="signed_out">Signed out</string>
+
+    <string name="disconnect">Disconnect</string>
+    <string name="loading">Loading…</string>
+
+    <!-- Content Description for images -->
+    <string name="desc_google_icon">Google Logo</string>
+
+    <string name="title_text">Google Sign-In</string>
+    <string name="google_SignInButton_text">Sign in with </string>
+
+
+    <string name="app_name">Active Discovery</string>
     <string name="intro_text">Hi! Let\'s listen to some available data sources! Check the menu for more actions!</string>
     <string name="action_unregister_listener">Unregister listener</string>
     <string name="action_settings">Settings</string>
@@ -29,5 +44,8 @@ limitations under the License.
     <string name="action_cancel_subs">Cancel Subscriptions</string>
     <string name="action_delete_session">Delete session</string>
     <string name="ok">OK</string>
-    <string name="btnSession">StartSession</string>
+
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!--<string name="title_activity_tabbed">TabbedActivity</string>-->
 </resources>
