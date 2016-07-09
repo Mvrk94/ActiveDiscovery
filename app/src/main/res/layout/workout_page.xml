@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <CalendarView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/calendarView" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="#09b83e">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:id="@+id/btnActivity"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:onClick="btnActivityClicked"
+            style="@style/Base.Widget.AppCompat.Button.Colored" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="STEPS"
+            android:id="@+id/lblSteps"
+            android:layout_marginTop="45dp"
+            style="@style/Widget.AppCompat.TextView.SpinnerItem"
+            android:textColor="#F8F8FF"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/btnActivity"
+            android:layout_toStartOf="@+id/btnActivity" />
+
+        <TextView
+            style="@style/Widget.AppCompat.TextView.SpinnerItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DISTANCE"
+            android:id="@+id/lblDistance"
+            android:textColor="#F8F8FF"
+            android:layout_alignTop="@+id/lblSteps"
+            android:layout_toRightOf="@+id/btnActivity"
+            android:layout_toEndOf="@+id/btnActivity" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>
