@@ -29,7 +29,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/btnActivity"
+                android:text="Start"
                 android:id="@+id/btnActivity"
                 android:onClick="btnActivityClicked"
                 style="@style/Base.Widget.AppCompat.Button.Colored"
@@ -39,7 +39,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lblSteps"
+                android:text="Steps"
                 android:id="@+id/lblSteps"
                 style="@style/Widget.AppCompat.TextView.SpinnerItem"
                 android:textColor="#F8F8FF"
@@ -51,7 +51,7 @@
                 style="@style/Widget.AppCompat.TextView.SpinnerItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lblDist"
+                android:text="Distance"
                 android:id="@+id/lblDistance"
                 android:textColor="#F8F8FF"
                 android:paddingTop="25px"

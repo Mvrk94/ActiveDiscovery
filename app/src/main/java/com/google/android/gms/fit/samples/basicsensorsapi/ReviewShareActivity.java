@@ -18,7 +18,7 @@ import android.widget.RemoteViews;
 
 import com.google.android.gms.*;
 
-import com.facebook.FacebookSdk;
+//import com.facebook.FacebookSdk;
 import com.google.android.gms.*;
 
 import java.io.ByteArrayOutputStream;
