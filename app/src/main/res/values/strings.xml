@@ -39,6 +39,8 @@ limitations under the License.
         functionality.</string>
     <string name="settings">Settings</string>
     <string name="action_update_data">Update step count data</string>
+    <string name ="facebook_app_id">1734052260216601</string>
+
     <string name="action_delete_data">Delete step count data</string>
     <string name="action_dump_subs">List Active Subscriptions</string>
     <string name="action_cancel_subs">Cancel Subscriptions</string>
@@ -47,6 +49,12 @@ limitations under the License.
 
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="action_sign_out">Sign out</string>
+    <string name ="title_activity_review_share">Review and Share</string>
+    <string name ="title_activity_test">Test</string>
+    <string name="title_activity_preferences">Preferences</string>
+
+    <string name="hello_world">Hello world!</string>
+
 
     <!--<string name="title_activity_tabbed">TabbedActivity</string>-->
 </resources>
