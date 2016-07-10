@@ -97,21 +97,27 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
     private final double stepValue = 0.76;
     private static double totalDistance = 0;
     private boolean hasWorkoutStarted = false;
+    TextView lblSteps;
+    TextView lblDistance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.workout_page);
-        initializeLogging();
+//        initializeLogging();
         if (!checkPermissions()) {
             requestPermissions();
         }
+
+        lblSteps = (TextView)findViewById(R.id.lblSteps);
+        lblDistance = (TextView) findViewById(R.id.lblDistance);
+        lblSteps.setText("0");
+        lblDistance.setText("0m");
     }
 
     public void btnActivityClicked(View v) {
         Button btnSession = (Button) v;
-        TextView lblSteps = (TextView)findViewById(R.id.lblSteps);
-        TextView lblDistance = (TextView) findViewById(R.id.lblDistance);
         if(hasWorkoutStarted == false){
             ((Button) v).setText("Session Started...");
             hasWorkoutStarted = true;
@@ -120,6 +126,7 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
             cal.setTime(now);
             startTime = cal.getTimeInMillis();
             startStepListening();
+//            new stepListeningTask().execute();
             ((Button) v).setText("Stop Session");
         }else{
             ((Button) v).setText("Stopping Session...");
@@ -129,17 +136,27 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
             cal.setTime(now);
             stopTime = cal.getTimeInMillis();
 
-            unregisterFitnessDataListener(mClient,walkListener);
-            Log.i(TAG, "Total Steps: " + totalSteps + "");
-            lblSteps.setText(totalSteps+"");
-            lblDistance.setText(totalDistance
-                    +"");
-            Log.i(TAG, "Total Distance: " + totalDistance + "m");
-            Log.i(TAG, "Discovery Vitality Points: " + calculateDiscoveryPoints(totalDistance)+"");
+            unregisterFitnessDataListener(mClient, walkListener);
+//            Log.i(TAG, "Total Steps: " + totalSteps + "");
+            lblSteps.setText(totalSteps + "");
+            lblDistance.setText(String.format( "%.2f", totalDistance ));
+//            Log.i(TAG, "Total Distance: " + totalDistance + "m");
+//            Log.i(TAG, "Discovery Vitality Points: "  + calculateDiscoveryPoints(totalDistance)+"");
             ((Button) v).setText("Start Session");
         }
 
 
+    }
+
+
+
+    private class stepListeningTask extends AsyncTask<Void,Void,Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+//            Toast.makeText(getApplicationContext(), "Alternate Thread Started", Toast.LENGTH_SHORT).show();
+            startStepListening();
+            return null;
+        }
     }
 
 
@@ -151,13 +168,14 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
                 .setResultCallback(new ResultCallback<DataSourcesResult>() {
                     @Override
                     public void onResult(DataSourcesResult dataSourcesResult) {
-                        Log.i(TAG, "Result: " + dataSourcesResult.getStatus().toString());
+//                        Log.i(TAG, "Result: " + dataSourcesResult.getStatus().toString());
                         for (DataSource dataSource : dataSourcesResult.getDataSources()) {
-                            Log.i(TAG, "Data source found: " + dataSource.toString());
-                            Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
+//                            Log.i(TAG, "Data source found: " + dataSource.toString());
+//                            Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
                             if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA) && walkListener == null) {
                                 walkDataSource = dataSource;
-                                Log.i(TAG, "Data source for STEP found!  Registering.");
+//                                Log.i(TAG, "Data source for STEP found!  Registering.");
+                                Toast.makeText(getApplicationContext(), "DataSource", Toast.LENGTH_SHORT).show();
                                 walkListener = new OnDataPointListener() {
                                     @Override
                                     public void onDataPoint(DataPoint dataPoint) {
@@ -165,9 +183,17 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
                                             final Value val = dataPoint.getValue(field);
                                             totalSteps += val.asInt();
                                             totalDistance += (stepValue * val.asInt());
-                                            final DecimalFormat df = new DecimalFormat("#.00");
-                                            totalDistance = Double.valueOf(df.format(totalDistance));
-                                            Log.i(TAG, "Steps: " + val +  " distance: " + (stepValue * val.asInt())+"");
+//                                            final DecimalFormat df = new DecimalFormat("#.00");
+//                                            totalDistance = Double.valueOf(df.format(totalDistance));
+//                                            Log.i(TAG, "Steps: " + val + " distance: " + (stepValue * val.asInt()) + "");
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    lblSteps.setText(totalSteps + "");
+                                                    lblDistance.setText(String.format( "%.2f", totalDistance ));
+                                                }
+                                            });
+
                                         }
                                     }
                                 };
@@ -175,13 +201,16 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
                                         new SensorRequest.Builder()
                                                 .setDataSource(walkDataSource)
                                                 .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                                                .setSamplingRate(5, TimeUnit.MINUTES)
                                                 .build(), walkListener).setResultCallback(new ResultCallback<Status>() {
                                     @Override
                                     public void onResult(Status status) {
                                         if (status.isSuccess()) {
-                                            Log.i(TAG, "WALK Listener registered!");
+//                                            Log.i(TAG, "WALK Listener registered!");
+                                            Toast.makeText(getApplicationContext(), "Listeners initialized", Toast.LENGTH_SHORT).show();
                                         } else {
-                                            Log.i(TAG, "WALK Listener not registered");
+//                                            Log.i(TAG, "WALK Listener not registered");
+                                            Toast.makeText(getApplicationContext(), "Listeners failed to register", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
@@ -228,7 +257,8 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
                             new GoogleApiClient.ConnectionCallbacks() {
                                 @Override
                                 public void onConnected(Bundle bundle) {
-                                    Log.i(TAG, "Connected!!!");
+                                    Toast.makeText(getApplicationContext(), "Client Connected", Toast.LENGTH_SHORT).show();
+//                                    Log.i(TAG, "Connected!!!");
                                     // Now you can make calls to the Fitness APIs.
 //                                    findFitnessDataSources();
 //                                    subscribe();
@@ -240,11 +270,10 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
                                     // If your connection to the sensor gets lost at some point,
                                     // you'll be able to determine the reason and react to it here.
                                     if (i == ConnectionCallbacks.CAUSE_NETWORK_LOST) {
-                                        Log.i(TAG, "Connection lost.  Cause: Network Lost.");
+//                                        Log.i(TAG, "Connection lost.  Cause: Network Lost.");
                                     } else if (i
                                             == ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
-                                        Log.i(TAG,
-                                                "Connection lost.  Reason: Service Disconnected");
+//                                        Log.i(TAG,"Connection lost.  Reason: Service Disconnected");
                                     }
                                 }
                             }
@@ -252,8 +281,7 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
                     .enableAutoManage(this, 0, new GoogleApiClient.OnConnectionFailedListener() {
                         @Override
                         public void onConnectionFailed(ConnectionResult result) {
-                            Log.i(TAG, "Google Play services connection failed. Cause: " +
-                                    result.toString());
+//                            Log.i(TAG, "Google Play services connection failed. Cause: " +result.toString());
                             Snackbar.make(
                                     workout.this.findViewById(R.id.main_activity_view),
                                     "Exception while connecting to Google Play services: " +
@@ -284,34 +312,34 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
                     @Override
                     public void onResult(Status status) {
                         if (status.isSuccess()) {
-                            Log.i(TAG, "Listener was removed!");
+//                            Log.i(TAG, "Listener was removed!");
                         } else {
-                            Log.i(TAG, "Listener was not removed.");
+//                            Log.i(TAG, "Listener was not removed.");
                         }
                     }
                 });
         // [END unregister_data_listener]
     }
 
-    private void initializeLogging() {
-        // Wraps Android's native log framework.
-        LogWrapper logWrapper = new LogWrapper();
-        // Using Log, front-end to the logging chain, emulates android.util.log method signatures.
-        Log.setLogNode(logWrapper);
-        // Filter strips out everything except the message text.
-        MessageOnlyLogFilter msgFilter = new MessageOnlyLogFilter();
-        logWrapper.setNext(msgFilter);
-        // On screen logging via a customized TextView.
-        LogView logView = (LogView) findViewById(R.id.sample_logview);
-
-        // Fixing this lint errors adds logic without benefit.
-        //noinspection AndroidLintDeprecation
-        logView.setTextAppearance(this, R.style.Log);
-
-        logView.setBackgroundColor(Color.WHITE);
-        msgFilter.setNext(logView);
-        Log.i(TAG, "Ready");
-    }
+//    private void initializeLogging() {
+//        // Wraps Android's native log framework.
+//        LogWrapper logWrapper = new LogWrapper();
+//        // Using Log, front-end to the logging chain, emulates android.util.log method signatures.
+//        Log.setLogNode(logWrapper);
+//        // Filter strips out everything except the message text.
+//        MessageOnlyLogFilter msgFilter = new MessageOnlyLogFilter();
+//        logWrapper.setNext(msgFilter);
+//        // On screen logging via a customized TextView.
+//        LogView logView = (LogView) findViewById(R.id.sample_logview);
+//
+//        // Fixing this lint errors adds logic without benefit.
+//        //noinspection AndroidLintDeprecation
+//        logView.setTextAppearance(this, R.style.Log);
+//
+//        logView.setBackgroundColor(Color.WHITE);
+//        msgFilter.setNext(logView);
+//        Log.i(TAG, "Ready");
+//    }
 
     private boolean checkPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(this,
@@ -327,7 +355,7 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
         // Provide an additional rationale to the user. This would happen if the user denied the
         // request previously, but didn't check the "Don't ask again" checkbox.
         if (shouldProvideRationale) {
-            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+//            Log.i(TAG, "Displaying permission rationale to provide additional context.");
             Snackbar.make(
                     findViewById(R.id.main_activity_view),
                     R.string.permission_rationale,
@@ -343,7 +371,7 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
                     })
                     .show();
         } else {
-            Log.i(TAG, "Requesting permission");
+//            Log.i(TAG, "Requesting permission");
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
@@ -359,12 +387,12 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        Log.i(TAG, "onRequestPermissionResult");
+//        Log.i(TAG, "onRequestPermissionResult");
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.length <= 0) {
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.
-                Log.i(TAG, "User interaction was cancelled.");
+//                Log.i(TAG, "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted.
                 buildFitnessClient();
@@ -407,8 +435,7 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
 
     @Override
     public void onConnected(Bundle bundle) {
-        Toast.makeText( workout.this , "Connected2",
-                Toast.LENGTH_LONG).show();
+        Toast.makeText( workout.this , "Connected",Toast.LENGTH_LONG).show();
     }
 
     @Override

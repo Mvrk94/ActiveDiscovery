@@ -1,54 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1">
-
-    <CalendarView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/calendarView" />
+    android:weightSum="100">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
-        android:background="#09b83e">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Start"
-            android:id="@+id/btnActivity"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:onClick="btnActivityClicked"
-            style="@style/Base.Widget.AppCompat.Button.Colored" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="STEPS"
-            android:id="@+id/lblSteps"
-            android:layout_marginTop="45dp"
-            style="@style/Widget.AppCompat.TextView.SpinnerItem"
-            android:textColor="#F8F8FF"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/btnActivity"
-            android:layout_toStartOf="@+id/btnActivity" />
-
-        <TextView
-            style="@style/Widget.AppCompat.TextView.SpinnerItem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DISTANCE"
-            android:id="@+id/lblDistance"
-            android:textColor="#F8F8FF"
-            android:layout_alignTop="@+id/lblSteps"
-            android:layout_toRightOf="@+id/btnActivity"
-            android:layout_toEndOf="@+id/btnActivity" />
+        android:background="#70e9ff"
+        android:layout_weight="40">
 
     </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#09b83e"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_weight="60">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btnActivity"
+                android:id="@+id/btnActivity"
+                android:onClick="btnActivityClicked"
+                style="@style/Base.Widget.AppCompat.Button.Colored"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lblSteps"
+                android:id="@+id/lblSteps"
+                style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                android:textColor="#F8F8FF"
+                android:layout_alignBottom="@+id/imageView"
+                android:layout_alignLeft="@+id/lblDistance"
+                android:layout_alignStart="@+id/lblDistance" />
+
+            <TextView
+                style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lblDist"
+                android:id="@+id/lblDistance"
+                android:textColor="#F8F8FF"
+                android:paddingTop="25px"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView"
+                android:background="@drawable/ic_running_dude"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Running"
+                android:id="@+id/lblRunning"
+                android:textColor="#ffffff"
+                android:layout_above="@+id/lblSteps"
+                android:layout_toRightOf="@+id/imageView"
+                android:layout_toEndOf="@+id/imageView" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView2"
+                android:background="@drawable/ic_steps"
+                android:layout_toLeftOf="@+id/lblDistance"
+                android:layout_toStartOf="@+id/lblDistance"
+                android:layout_alignTop="@+id/lblRunning" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView3"
+                android:background="@drawable/ic_confirmation_number_black_24dp"
+                android:paddingRight="100px"
+                android:paddingTop="100px"
+                android:layout_centerVertical="true"
+                android:layout_alignLeft="@+id/imageView2"
+                android:layout_alignStart="@+id/imageView2" />
+
+            <DigitalClock
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/digitalClock"
+                style="@style/TextAppearance.StatusBar.EventContent.Time"
+                android:textColor="#ffffff"
+                android:textSize="50px"
+                android:layout_alignTop="@+id/lblDistance"
+                android:layout_toRightOf="@+id/imageView"
+                android:layout_toEndOf="@+id/imageView" />
+
+        </RelativeLayout>
 
 </LinearLayout>
+</FrameLayout>
