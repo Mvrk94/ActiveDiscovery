@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.graphics.Bitmap;
 import android.widget.RatingBar;
 import android.widget.RemoteViews;
+import android.widget.TextView;
 
 import com.google.android.gms.*;
 
@@ -40,8 +41,6 @@ public class ReviewShareActivity extends AppCompatActivity {
     public Button btnGoogleShare;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.review_rewards_share);
 

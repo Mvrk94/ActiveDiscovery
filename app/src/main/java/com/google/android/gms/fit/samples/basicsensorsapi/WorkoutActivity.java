@@ -2,6 +2,7 @@ package com.google.android.gms.fit.samples.basicsensorsapi;
 
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -50,6 +51,7 @@ import com.google.android.gms.fitness.result.DataSourcesResult;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class WorkoutActivity extends AppCompatActivity {
@@ -126,13 +128,14 @@ public class WorkoutActivity extends AppCompatActivity {
             lblSteps.setText(totalSteps + "");
             lblDistance.setText(String.format("%.2f", totalDistance));
             ((Button) v).setText("Start Session");
-            thread.stop();
+//            thread.stop();
             unregisterFitnessDataListener();
             discoveryPoints = calculateDiscoveryPoints(totalDistance);
             sharePoints = calculateSharePoints(totalDistance);
-            startActivity(new Intent(this, ReviewShareActivity.class));
+            startActivity(new Intent(WorkoutActivity.this, ReviewShareActivity.class));
         }
     }
+
 
     public int calculateDiscoveryPoints(double dist){
         return (int)((dist *6) /100);
@@ -233,10 +236,13 @@ public class WorkoutActivity extends AppCompatActivity {
 //                            totalSteps += val.asInt();
                             Message stepsMessage = new Message();
                             Message distMessage = new Message();
-                            totalSteps += val.asInt();
-                            stepsMessage.what = totalSteps;
-                            totalDistance += (stepValue * val.asInt());
-                            distMessage.obj = totalDistance;
+                            if(val.asInt() > 0){
+                                totalSteps += val.asInt();
+                                stepsMessage.what = totalSteps;
+                                totalDistance += (stepValue * val.asInt());
+                                distMessage.obj = totalDistance;
+                            }
+
                             try {
                                 thread.sleep(0);
                             } catch (InterruptedException e) {

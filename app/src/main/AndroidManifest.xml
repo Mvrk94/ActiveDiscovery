@@ -33,11 +33,15 @@ limitations under the License.
         </activity>
 
         <activity
+            android:name=".ReviewShareActivity"
+            android:label="@string/app_name">
+        </activity>
+
+        <activity
             android:name=".TabbedActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
-
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
 
@@ -46,7 +50,6 @@ limitations under the License.
         <activity android:name=".SignIn">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
