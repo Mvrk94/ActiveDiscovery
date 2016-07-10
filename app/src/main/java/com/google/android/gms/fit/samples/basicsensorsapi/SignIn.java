@@ -133,13 +133,13 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
     }
 
     // [START signOut]
-    private void signOut() {
+    public static void signOut() {
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
                         // [START_EXCLUDE]
-                        updateUI(false);
+
                         // [END_EXCLUDE]
                     }
                 });
@@ -191,7 +191,7 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
-           // mStatusTextView.setText(R.string.signed_out);
+            //mStatusTextView.setText(R.string.signed_out);
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
            //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);

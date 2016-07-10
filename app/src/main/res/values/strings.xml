@@ -46,6 +46,7 @@ limitations under the License.
     <string name="ok">OK</string>
 
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="action_sign_out">Sign out</string>
 
     <!--<string name="title_activity_tabbed">TabbedActivity</string>-->
 </resources>

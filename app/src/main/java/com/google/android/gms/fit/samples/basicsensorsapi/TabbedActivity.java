@@ -1,5 +1,6 @@
 package com.google.android.gms.fit.samples.basicsensorsapi;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.Auth;
+
 public class TabbedActivity extends AppCompatActivity {
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -34,6 +37,7 @@ public class TabbedActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+  //  private GoogleApiClient myGoogGoogleApiClient = SignIn.mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +90,44 @@ public class TabbedActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        switch (id)
+        {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_sign_out:
 
-        return super.onOptionsItemSelected(item);
+
+                if(SignIn.mGoogleApiClient.isConnected())
+                {
+
+                    Auth.GoogleSignInApi.signOut(SignIn.mGoogleApiClient);
+                    Intent myIntent = new Intent(TabbedActivity.this,SignIn.class);
+                    TabbedActivity.this.startActivity(myIntent);
+
+//                    Auth.GoogleSignInApi.signOut(SignIn.mGoogleApiClient).setResultCallback(
+//                        new ResultCallback<Status>() {
+//                            @Override
+//                            public void onResult(Status status) {
+//                                // [START_EXCLUDE]
+//                                Intent myIntent = new Intent(TabbedActivity.this,SignIn.class);
+//                                TabbedActivity.this.startActivity(myIntent);
+//                                // [END_EXCLUDE]
+//                            }
+//                        });
+
+
+                    SignIn.mGoogleApiClient.disconnect();
+                    SignIn.mGoogleApiClient.connect();
+                }
+                //Intent myIntent = new Intent(TabbedActivity.this,SignIn.class);
+                 //               TabbedActivity.this.startActivity(myIntent);
+
+                //sign the user out
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
@@ -128,21 +164,21 @@ public class TabbedActivity extends AppCompatActivity {
                                  Bundle savedInstanceState)
         {
             View rootView = inflater.inflate(R.layout.fragment_tabbed_home, container, false);
-            mainFragButton = (Button) rootView.findViewById(R.id.button1);
-            mText = (TextView) rootView.findViewById(R.id.textView1);
-
-            mainFragButton.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v) {
-                    if(mText.getText().toString().contains("Hello M"))
-                    {
-                        mText.setText("You changed this text");
-                    }
-                    else
-                        mText.setText("Hello M");
-                }
-            });
+//            mainFragButton = (Button) rootView.findViewById(R.id.button1);
+//            mText = (TextView) rootView.findViewById(R.id.textView1);
+//
+//            mainFragButton.setOnClickListener(new View.OnClickListener()
+//            {
+//                @Override
+//                public void onClick(View v) {
+//                    if(mText.getText().toString().contains("Hello M"))
+//                    {
+//                        mText.setText("You changed this text");
+//                    }
+//                    else
+//                        mText.setText("Hello M");
+//                }
+//            });
 
             return rootView;
         }
@@ -177,22 +213,22 @@ public class TabbedActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_tabbed_home, container, false);
-            mainFragButton = (Button) rootView.findViewById(R.id.button1);
-            mText = (TextView) rootView.findViewById(R.id.textView1);
-
-            mainFragButton.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v) {
-                    if(mText.getText().toString().contains("Hello M"))
-                    {
-                        mText.setText("You changed this text");
-                    }
-                    else
-                        mText.setText("Hello M");
-                }
-            });
+            View rootView = inflater.inflate(R.layout.fragment_tabbed_activity, container, false);
+//            mainFragButton = (Button) rootView.findViewById(R.id.button1);
+//            mText = (TextView) rootView.findViewById(R.id.textView1);
+//
+//            mainFragButton.setOnClickListener(new View.OnClickListener()
+//            {
+//                @Override
+//                public void onClick(View v) {
+//                    if(mText.getText().toString().contains("Hello M"))
+//                    {
+//                        mText.setText("You changed this text");
+//                    }
+//                    else
+//                        mText.setText("Hello M");
+//                }
+//            });
 
             return rootView;
         }
