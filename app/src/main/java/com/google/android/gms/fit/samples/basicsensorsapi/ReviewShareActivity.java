@@ -29,6 +29,7 @@ public class ReviewShareActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1313;
     ImageView imgtakenPhoto;
+    TextView txtPoints;
     Button btnSelfie;
     Button fbButton;
     RatingBar rbNumStars;
@@ -43,6 +44,8 @@ public class ReviewShareActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.review_rewards_share);
+
+        txtPoints = (TextView) txtPoints.findViewById(R.id.pointsTextView);
 
         btnSelfie = (Button) findViewById(R.id.btnSelfie);
         btnSelfie.setEnabled(false);
@@ -136,11 +139,37 @@ public class ReviewShareActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
+            String type = "image/*";
+            createInstagramIntent(type);
+
+
         }
     }
 
 
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    private void createInstagramIntent(String type){
+
+        // Create the new Intent using the 'Send' action.
+        Intent share = new Intent(Intent.ACTION_SEND);
+
+        // Set the MIME type
+        share.setType("image/*");
+
+        // Create the URI from the media
+        Uri imgUri = getImageUri(ReviewShareActivity.this,thumbnail);
 
 
+        // Add the URI to the Intent.
+        share.putExtra(Intent.EXTRA_STREAM, imgUri);
 
+        // Broadcast the Intent.
+        startActivity(Intent.createChooser(share, "Share to"));
+    }
 }

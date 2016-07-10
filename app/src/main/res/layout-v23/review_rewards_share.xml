@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100">
+
+    <android.support.design.widget.AppBarLayout
+
+
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/appbar_padding_top"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_round_logo"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="55">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Well done you awesome person"
+            android:id="@+id/textView"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="#000330"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="99"
+            android:id="@+id/pointsTextView"
+            android:textSize="70dp"
+            android:textColor="#04217F"
+            android:layout_below="@+id/textView"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Please review the workout to claim your points"
+            android:id="@+id/textView5"
+            android:layout_below="@+id/ratingBar"
+            android:layout_centerHorizontal="true"
+            android:textStyle="italic" />
+
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ratingBar"
+            android:layout_centerHorizontal="true"
+            android:layout_alignBaseline="@+id/pointsTextView" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/editText"
+            android:text="Comment on your workout"
+            android:lines="2"
+            android:textColor="#383b3d"
+            android:singleLine="true"
+            android:textSize="12dp"
+            android:layout_below="@+id/textView5"
+            android:layout_alignLeft="@+id/textView5"
+            android:layout_alignStart="@+id/textView5"
+            android:layout_alignRight="@+id/textView5"
+            android:layout_alignEnd="@+id/textView5" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="You earned                             points"
+            android:id="@+id/textView7"
+            android:textStyle="bold"
+            android:textColor="#000028"
+            android:layout_below="@+id/space"
+            android:layout_alignLeft="@+id/ratingBar"
+            android:layout_alignStart="@+id/ratingBar" />
+
+        <Space
+            android:layout_width="fill_parent"
+            android:layout_height="50px"
+            android:id="@+id/space"
+            android:layout_below="@+id/textView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="45">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Accept"
+            android:id="@+id/button"
+            style="@android:style/Widget.Material.Button.Colored"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@color/bright_sea_blue" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="   Capture your MOMENT OF DELIGHT"
+            android:id="@+id/textView6"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:textColor="#f5fcff"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:background="@color/bright_sea_blue"
+            android:textSize="18dp" />
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/imgSelfie"
+            android:src="@drawable/default_avatar"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="27dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/textView6"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Take a sexy post workout selfie and share it to add to those points you just earned"
+            android:id="@+id/textView8"
+            android:layout_alignTop="@+id/imgSelfie"
+            android:layout_toRightOf="@+id/imgSelfie"
+            android:layout_toEndOf="@+id/imgSelfie"
+            android:textStyle="italic"
+            android:layout_marginLeft="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="Selfie"
+            android:id="@+id/btnSelfie"
+            android:layout_alignLeft="@+id/textView8"
+            android:layout_alignStart="@+id/textView8"
+            android:background="@color/bright_sea_blue"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_alignBottom="@+id/imgSelfie"
+            android:textColor="#ffffff"
+            android:enabled="true" />
+
+        <Button
+            android:id="@+id/share_button"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Share"
+            android:textColor="#ffffff"
+            android:background="@drawable/common_plus_signin_btn_text_dark_normal"
+            android:layout_centerVertical="true"
+            android:layout_alignLeft="@+id/imgSelfie"
+            android:layout_alignStart="@+id/imgSelfie"
+            android:enabled="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(+5 extra points)"
+            android:id="@+id/textView9"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/share_button"
+            android:layout_toEndOf="@+id/share_button" />
+
+        <!--<com.facebook.share.widget.ShareButton-->
+            <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+            <!--android:id="@+id/shareButton"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="5dp" />-->
+        <!--<com.facebook.share.widget.ShareButton-->
+            <!--xmlns:facebook="http://schemas.android.com/apk/res-auto"-->
+            <!--android:id="@+id/shareButton"-->
+            <!--android:layout_width="105dp"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:background="@color/com_facebook_button_background_color"-->
+            <!--android:layout_below="@+id/share_button"-->
+            <!--android:layout_alignLeft="@+id/share_button"-->
+            <!--android:layout_alignStart="@+id/share_button"-->
+            <!--android:layout_marginTop="26dp"-->
+            <!--android:layout_marginLeft="2dp"-->
+            <!--android:enabled="true" />-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(+5 extra points)"
+            android:id="@+id/textView10"
+            android:layout_above="@+id/button"
+            android:layout_alignLeft="@+id/textView9"
+            android:layout_alignStart="@+id/textView9"
+            android:layout_marginBottom="30dp" />
+    </RelativeLayout>
+
+</LinearLayout>
+
+
+
+
+
