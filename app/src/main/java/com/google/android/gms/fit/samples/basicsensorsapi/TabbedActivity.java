@@ -2,7 +2,6 @@ package com.google.android.gms.fit.samples.basicsensorsapi;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,7 +22,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 
 public class TabbedActivity extends AppCompatActivity {
     /**
@@ -41,6 +40,8 @@ public class TabbedActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+
+
   //  private GoogleApiClient myGoogGoogleApiClient = SignIn.mGoogleApiClient;
 
     @Override
@@ -50,7 +51,6 @@ public class TabbedActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -138,55 +138,71 @@ public class TabbedActivity extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragmentHome extends Fragment implements OnMapReadyCallback {
+    public static class PlaceholderFragmentHome extends Fragment {
+
+
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        private SupportMapFragment mapFrag;
+        private GoogleMap mgglMap;
+
         public PlaceholderFragmentHome() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        //Links with fragment_tabbed_home
         public static PlaceholderFragmentHome newInstance(int sectionNumber) {
             PlaceholderFragmentHome fragment = new PlaceholderFragmentHome();
-            //Bundle args = new Bundle();
-            //args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            //fragment.setArguments(args);
+
             return fragment;
         }
 
-        Button mainFragButton;
-        TextView mText;
-
-        @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState)
         {
             View rootView = inflater.inflate(R.layout.fragment_tabbed_home, container, false);
 
+
             return rootView;
         }
-
         @Override
-        public void onViewCreated(View view, Bundle savedInstanceState)
-        {
-            super.onViewCreated(view, savedInstanceState);
-            //get a reference to the small map fragment
-            Fragment mapfrag = getChildFragmentManager().findFragmentById(R.id.fragment_map);
+        public void onActivityCreated( Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+
+            FragmentManager fm = getChildFragmentManager();
+            mapFrag = (SupportMapFragment) fm.findFragmentById(R.id.map_container);
+            if (mapFrag == null) {
+                mapFrag = SupportMapFragment.newInstance();
+                fm.beginTransaction().replace(R.id.map_container, mapFrag).commit();
+            }
 
         }
 
-        @Override
-        public void onMapReady(GoogleMap googleMap) {
 
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            if (mgglMap == null) {
+                mgglMap= mapFrag.getMap();
+
+            }
         }
+
+
+        //        @Override
+//        public void onViewCreated(View view, Bundle savedInstanceState)
+//        {
+//            super.onViewCreated(view, savedInstanceState);
+//            //get a reference to the small map fragment
+//            MapFragment mapfrag = (MapFragment)getChildFragmentManager().findFragmentById(R.id.fragment_map);
+//            mapfrag.getMapAsync(this);
+//        }
+
+
     }
 
 
@@ -215,7 +231,7 @@ public class TabbedActivity extends AppCompatActivity {
         Button mainFragButton;
         TextView mText;
 
-        final String[] activitiesarr = new String[]{"Gem of Joburg Walk","Zoo Lake Trail","Center City Cycle","Outdoor Fitness Class","Zumba Dance Class"};
+        final static String[] activitiesarr = new String[]{"Gem of Joburg Walk","Zoo Lake Trail","Center City Cycle","Outdoor Fitness Class","Zumba Dance Class"};
         @Override
         public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                                  Bundle savedInstanceState)
