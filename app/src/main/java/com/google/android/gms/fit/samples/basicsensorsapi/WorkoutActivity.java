@@ -72,8 +72,8 @@ public class WorkoutActivity extends AppCompatActivity {
     TextView lblDistance;
     Handler stepsHandler;
     Handler distHandler;
-    public static int discoveryPoints;
-    public static int sharePoints ;
+    public static int discoveryPoints=0;
+    public static int sharePoints =0;
     int x = 1;
 
 

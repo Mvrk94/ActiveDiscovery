@@ -25,6 +25,16 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
 public class TabbedActivity extends AppCompatActivity {
+    public static ListView listview;
+    public static Integer[] imageId = {R.drawable.morning_run_square,
+            R.drawable.lake_city_run,
+            R.drawable.cycle_square,
+            R.drawable.pilates,
+            R.drawable.zumba_dance_class,
+            R.drawable.pilates2
+    };
+    public static String[] distancesArr;
+    public static Integer[] ratingsArr;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -240,19 +250,19 @@ public class TabbedActivity extends AppCompatActivity {
            //******HAD BEFORE:
             View rootView = inflater.inflate(R.layout.fragment_tabbed_activity, container, false);
             //Initialize a listview
-            ListView listview = (ListView) rootView.findViewById(R.id.listViewActivities);
+            listview = (ListView) rootView.findViewById(R.id.listViewActivities);
 
-            Integer[] imageId = {R.drawable.morning_run_square,
-                                    R.drawable.lake_city_run,
-                                    R.drawable.cycle_square,
-                         R.drawable.pilates,
-                    R.drawable.zumba_dance_class,
-                    R.drawable.pilates2
-            };
+//            imageId = {R.drawable.morning_run_square,
+//                                    R.drawable.lake_city_run,
+//                                    R.drawable.cycle_square,
+//                         R.drawable.pilates,
+//                    R.drawable.zumba_dance_class,
+//                    R.drawable.pilates2
+//            };
 
              //String [] activitiesarr = new String[] {"Gem of Joburg Walk","Zoo Lake Trail","Center City Cycle","Outdoor Fitness Class","Zumba Dance Class"};
-            String[] distancesArr = new String[]{"Distance from you: 3km","Distance from you: 5km","Distance from you: 2km","Distance from you: 3km","Distance from you: 1.5km","Distance from you: 4.5km",};
-            Integer[] ratingsArr = new Integer[]{3,5,4,3,3,5};
+            distancesArr = new String[]{"Distance from you: 3km","Distance from you: 5km","Distance from you: 2km","Distance from you: 3km","Distance from you: 1.5km","Distance from you: 4.5km",};
+            ratingsArr = new Integer[]{3,5,4,3,3,5};
 
             ListAdapter listadpter = new CustomAdapter(getActivity(),imageId,activitiesarr,distancesArr,ratingsArr);
 
@@ -263,11 +273,15 @@ public class TabbedActivity extends AppCompatActivity {
             //listview.setOnItemClickListener(new ItemClickListener());
 
 
-            listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+             listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                    // String activity = activitiesarr[position];
                     Intent myIntent = new Intent(getActivity(),ActivitiesDetailsActivity.class);
+                    myIntent.putExtra("position", position+"");
+//                    Bundle myBundle = new Bundle();
+//                    myBundle.putInt("position", position);
+//                    myIntent.putExtras(myBundle);
                     startActivity(myIntent);
                     //Toast.makeText(getActivity(),"Clicked me", Toast.LENGTH_LONG).show();
                 }
