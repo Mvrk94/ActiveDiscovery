@@ -222,7 +222,7 @@ public class WorkoutActivity extends AppCompatActivity {
         lblSteps.setText(String.valueOf(totalSteps));
         final DataSource ds = dataSource;
 
-//        Toast.makeText(getApplicationContext(), "GETTING TO CODE" , Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "GETTING TO CODE" , Toast.LENGTH_SHORT).show();
         thread = new Thread(new Runnable() {
             public void run() {
                 stepsListener = new OnDataPointListener() {
