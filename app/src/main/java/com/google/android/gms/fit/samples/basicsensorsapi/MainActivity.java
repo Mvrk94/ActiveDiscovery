@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             unregisterFitnessDataListener(mClient,walkListener);
             Log.i(TAG, "Total Steps: " + totalSteps + "");
             Log.i(TAG, "Total Distance: " + totalDistance + "m");
-            Log.i(TAG, "Discovery Vitality Points: " + calculateDiscoveryPoints(totalDistance)+"");
+            Log.i(TAG, "Discovery Vitality Points: " + calculateDiscoveryPoints(totalDistance) + "");
             ((Button) v).setText("Start Session");
         }
 

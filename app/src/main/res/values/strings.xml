@@ -37,6 +37,7 @@ limitations under the License.
     <string name="permission_rationale">Location data is used as part of the Google Fit API</string>
     <string name="permission_denied_explanation">Permission was denied, but is needed for core
         functionality.</string>
+    <string name ="facebook_app_id">1734052260216601</string>
     <string name="settings">Settings</string>
     <string name="action_update_data">Update step count data</string>
     <string name="action_delete_data">Delete step count data</string>
@@ -46,7 +47,6 @@ limitations under the License.
     <string name="ok">OK</string>
 
     <string name="section_format">Hello World from section: %1$d</string>
-    <string name="action_sign_out">Sign out</string>
 
     <!--<string name="title_activity_tabbed">TabbedActivity</string>-->
 </resources>
