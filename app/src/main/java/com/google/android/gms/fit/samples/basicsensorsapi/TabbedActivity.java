@@ -2,8 +2,7 @@ package com.google.android.gms.fit.samples.basicsensorsapi;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,10 +15,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
 public class TabbedActivity extends AppCompatActivity {
     /**
@@ -60,14 +64,15 @@ public class TabbedActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         /**
          * set up Drawer Toggle of the Toolbar
@@ -133,7 +138,7 @@ public class TabbedActivity extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragmentHome extends Fragment {
+    public static class PlaceholderFragmentHome extends Fragment implements OnMapReadyCallback {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -159,28 +164,28 @@ public class TabbedActivity extends AppCompatActivity {
         Button mainFragButton;
         TextView mText;
 
+        @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState)
         {
             View rootView = inflater.inflate(R.layout.fragment_tabbed_home, container, false);
-//            mainFragButton = (Button) rootView.findViewById(R.id.button1);
-//            mText = (TextView) rootView.findViewById(R.id.textView1);
-//
-//            mainFragButton.setOnClickListener(new View.OnClickListener()
-//            {
-//                @Override
-//                public void onClick(View v) {
-//                    if(mText.getText().toString().contains("Hello M"))
-//                    {
-//                        mText.setText("You changed this text");
-//                    }
-//                    else
-//                        mText.setText("Hello M");
-//                }
-//            });
 
             return rootView;
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState)
+        {
+            super.onViewCreated(view, savedInstanceState);
+            //get a reference to the small map fragment
+            Fragment mapfrag = getChildFragmentManager().findFragmentById(R.id.fragment_map);
+
+        }
+
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+
         }
     }
 
@@ -210,25 +215,88 @@ public class TabbedActivity extends AppCompatActivity {
         Button mainFragButton;
         TextView mText;
 
+        final String[] activitiesarr = new String[]{"Gem of Joburg Walk","Zoo Lake Trail","Center City Cycle","Outdoor Fitness Class","Zumba Dance Class"};
+        @Override
+        public View onCreateView(LayoutInflater inflater, final ViewGroup container,
+                                 Bundle savedInstanceState)
+        {
+
+           //******HAD BEFORE:
+            View rootView = inflater.inflate(R.layout.fragment_tabbed_activity, container, false);
+            //Initialize a listview
+            ListView listview = (ListView) rootView.findViewById(R.id.listViewActivities);
+
+            Integer[] imageId = {R.drawable.morning_run_square,
+                                    R.drawable.lake_city_run,
+                                    R.drawable.cycle_square,
+                         R.drawable.pilates,
+                    R.drawable.zumba_dance_class,
+                    R.drawable.pilates2
+            };
+
+             //String [] activitiesarr = new String[] {"Gem of Joburg Walk","Zoo Lake Trail","Center City Cycle","Outdoor Fitness Class","Zumba Dance Class"};
+            String[] distancesArr = new String[]{"Distance from you: 3km","Distance from you: 5km","Distance from you: 2km","Distance from you: 3km","Distance from you: 1.5km","Distance from you: 4.5km",};
+            Integer[] ratingsArr = new Integer[]{3,5,4,3,3,5};
+
+            ListAdapter listadpter = new CustomAdapter(getActivity(),imageId,activitiesarr,distancesArr,ratingsArr);
+
+            //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, activitiesarr);
+
+            listview.setAdapter(listadpter);
+
+            //listview.setOnItemClickListener(new ItemClickListener());
+
+
+            listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                   // String activity = activitiesarr[position];
+                    Intent myIntent = new Intent(getActivity(),ActivitiesDetailsActivity.class);
+                    startActivity(myIntent);
+                    //Toast.makeText(getActivity(),"Clicked me", Toast.LENGTH_LONG).show();
+                }
+            });
+            //listview.setAdapter(new CustomAdapter(getActivity(),activitiesarr));
+
+            return rootView;
+            //**************
+
+        }
+
+
+    }
+
+    public static class PlaceholderFragmentDelight extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        public PlaceholderFragmentDelight()
+        {}
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        //Links with fragment_tabbed_home
+        public static PlaceholderFragmentDelight newInstance(int sectionNumber) {
+            PlaceholderFragmentDelight fragment = new PlaceholderFragmentDelight();
+            //Bundle args = new Bundle();
+            //args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            //fragment.setArguments(args);
+            return fragment;
+        }
+
+
+
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_tabbed_activity, container, false);
-//            mainFragButton = (Button) rootView.findViewById(R.id.button1);
-//            mText = (TextView) rootView.findViewById(R.id.textView1);
-//
-//            mainFragButton.setOnClickListener(new View.OnClickListener()
-//            {
-//                @Override
-//                public void onClick(View v) {
-//                    if(mText.getText().toString().contains("Hello M"))
-//                    {
-//                        mText.setText("You changed this text");
-//                    }
-//                    else
-//                        mText.setText("Hello M");
-//                }
-//            });
+                                 Bundle savedInstanceState)
+        {
+            View rootView = inflater.inflate(R.layout.fragment_tabbed_delight, container, false);
 
             return rootView;
         }
@@ -258,7 +326,7 @@ public class TabbedActivity extends AppCompatActivity {
                     return PlaceholderFragmentActivities.newInstance(position+1);
 
                 case 2:
-                    return PlaceholderFragmentActivities.newInstance(position+1);
+                    return PlaceholderFragmentDelight.newInstance(position+1);
                 default:
                     return null;
             }
