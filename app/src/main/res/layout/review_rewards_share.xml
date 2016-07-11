@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
 
-    <ImageView
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -197,23 +197,23 @@
             android:layout_toEndOf="@+id/share_button" />
 
         <!--<com.facebook.share.widget.ShareButton-->
-            <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:id="@+id/shareButton"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="5dp" />-->
+        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:id="@+id/shareButton"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="5dp" />-->
         <!--<com.facebook.share.widget.ShareButton-->
-            <!--xmlns:facebook="http://schemas.android.com/apk/res-auto"-->
-            <!--android:id="@+id/shareButton"-->
-            <!--android:layout_width="105dp"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:background="@color/com_facebook_button_background_color"-->
-            <!--android:layout_below="@+id/share_button"-->
-            <!--android:layout_alignLeft="@+id/share_button"-->
-            <!--android:layout_alignStart="@+id/share_button"-->
-            <!--android:layout_marginTop="26dp"-->
-            <!--android:layout_marginLeft="2dp"-->
-            <!--android:enabled="true" />-->
+        <!--xmlns:facebook="http://schemas.android.com/apk/res-auto"-->
+        <!--android:id="@+id/shareButton"-->
+        <!--android:layout_width="105dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:background="@color/com_facebook_button_background_color"-->
+        <!--android:layout_below="@+id/share_button"-->
+        <!--android:layout_alignLeft="@+id/share_button"-->
+        <!--android:layout_alignStart="@+id/share_button"-->
+        <!--android:layout_marginTop="26dp"-->
+        <!--android:layout_marginLeft="2dp"-->
+        <!--android:enabled="true" />-->
 
         <TextView
             android:layout_width="wrap_content"
