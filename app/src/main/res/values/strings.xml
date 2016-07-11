@@ -43,7 +43,10 @@ limitations under the License.
     <string name="action_delete_data">Delete step count data</string>
     <string name="action_dump_subs">List Active Subscriptions</string>
     <string name="action_cancel_subs">Cancel Subscriptions</string>
+    <string name ="title_activity_review_share">Review</string>
     <string name="action_delete_session">Delete session</string>
+    <string name ="title_activity_preferences">Preferences</string>
+    <string name ="title_activity_test">Test</string>
     <string name="ok">OK</string>
 
     <string name="section_format">Hello World from section: %1$d</string>
