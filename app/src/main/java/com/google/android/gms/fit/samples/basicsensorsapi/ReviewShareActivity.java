@@ -80,7 +80,7 @@ public class ReviewShareActivity extends AppCompatActivity {
         txtsharePoints1 = (TextView) findViewById(R.id.sharePoints1);
      //   txtsharePoints2 = (TextView) findViewById(R.id.sharePoints2);
 
-     //   txtsharePoints1.setText("(+"+sharePoints+" extra points)");
+        txtsharePoints1.setText("(+"+sharePoints+" extra points)");
      //   txtsharePoints2.setText("(+"+sharePoints+" extra points)");
 
         btnSelfie = (Button) findViewById(R.id.btnSelfie);
@@ -154,7 +154,7 @@ public class ReviewShareActivity extends AppCompatActivity {
      //   Toast.makeText(getApplicationContext(),path,Toast.LENGTH_SHORT).show();
         if(Count==2) {
             txtsharePoints1.setTextColor(getResources().getColor(R.color.dark_green));
-            txtsharePoints1.setText(sharePoints + "points added.");
+            txtsharePoints1.setText(sharePoints + " points added.");
             int updatedpoints = points + sharePoints;
             txtPoints.setText(String.valueOf(updatedpoints));
         }
@@ -255,7 +255,7 @@ public class ReviewShareActivity extends AppCompatActivity {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
 
        path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-            Toast.makeText(getApplicationContext(),path,Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(getApplicationContext(),path,Toast.LENGTH_SHORT).show();
         return Uri.parse(path);
     }
 //
