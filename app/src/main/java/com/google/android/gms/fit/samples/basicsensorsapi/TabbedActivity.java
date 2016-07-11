@@ -181,8 +181,6 @@ public class TabbedActivity extends AppCompatActivity {
 
         }
 
-
-
         @Override
         public void onResume() {
             super.onResume();

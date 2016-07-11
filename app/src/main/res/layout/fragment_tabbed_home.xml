@@ -14,9 +14,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="30dp"
         android:layout_gravity="center_vertical"
-        android:layout_margin="5dp"
+        android:layout_margin="1dp"
         android:background="@color/white"
 
         android:id="@+id/activity_image">
@@ -37,7 +37,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
         android:layout_gravity="center_vertical"
 
         android:layout_margin="5dp"
@@ -49,9 +49,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="20dp"
         android:layout_gravity="center_vertical"
-        android:layout_margin="5dp"
+        android:layout_margin="0dp"
         android:background="@color/white"
 
         android:id="@+id/text_Upcoming_Events_info">
@@ -61,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Upcoming :"
+            android:text="Upcoming events:"
             android:id="@+id/textView"
             android:textColor="@color/blue_grey_900"
             android:layout_centerVertical="true"
@@ -72,11 +72,90 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:paddingTop="50dp"
+        android:layout_height="170dp"
+        android:paddingTop="0dp"
         android:layout_gravity="center_vertical"
         android:layout_margin="5dp"
         android:background="@color/white">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relativeLayout">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/team_vitality_text"
+                android:layout_gravity="center"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/watercolor_cycle_icon"/>
+
+
+            </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Join Team Vitality's next cycle event:"
+            android:id="@+id/textViewJoin"
+            android:layout_below="@+id/relativeLayout"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:autoLink="web"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="16/07 Bestmed Jock Cycle Classic  "
+            android:id="@+id/textView2"
+            android:layout_below="@+id/textViewJoin"
+            android:layout_alignLeft="@+id/textViewJoin"
+            android:layout_alignStart="@+id/textViewJoin" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="150km (1500 points)"
+            android:id="@+id/textViewdist"
+            android:layout_below="@+id/textView2"
+            android:layout_alignLeft="@+id/textView2"
+            android:layout_alignStart="@+id/textView2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="more..."
+            android:padding="2dp"
+            android:id="@+id/textView3"
+            android:layout_below="@+id/textViewdist"
+            android:layout_alignLeft="@+id/textViewdist"
+            android:layout_alignStart="@+id/textViewdist"
+            android:autoLink="web"
+            android:clickable="true"/>
+
+
     </RelativeLayout>
 
 

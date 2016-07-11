@@ -13,7 +13,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -41,7 +40,7 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
         //mStatusTextView = (TextView) findViewById(R.id.status);
 
         // Button listeners
-        findViewById(R.id.sign_in_button).setOnClickListener((this));
+        //M*******findViewById(R.id.sign_in_button).setOnClickListener((this));
        // findViewById(R.id.sign_out_button).setOnClickListener(this);
         //findViewById(R.id.disconnect_button).setOnClickListener(this);
 
@@ -58,9 +57,11 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(AppIndex.API).build();
 
-        SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setScopes(gso.getScopeArray());
+        //******SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        //******signInButton.setSize(SignInButton.SIZE_STANDARD);
+        //******signInButton.setScopes(gso.getScopeArray());
+
+        findViewById(R.id.login_button_2).setOnClickListener(this);
 
     }
 
@@ -188,12 +189,12 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
     private void updateUI(boolean signedIn)
     {
         if (signedIn) {
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            //****findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
             //mStatusTextView.setText(R.string.signed_out);
 
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            //*****findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
            //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
     }
@@ -201,16 +202,18 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
     @Override
     public void onClick(View v)
     {
-        switch (v.getId()) {
-            case R.id.sign_in_button:
-                signIn();
-                break;
+        Intent loginIntent = new Intent(this,TabbedActivity.class);
+        startActivity(loginIntent);
+        //switch (v.getId()) {
+           //****** case R.id.sign_in_button:
+               // signIn();
+              //  break;
             //case R.id.sign_out_button:
               //signOut();
                  //break;
              //case R.id.disconnect_button:
                 //revokeAccess();
                  //break;
-        }
+        //}
     }
 }
