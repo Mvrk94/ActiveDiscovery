@@ -4,14 +4,11 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -19,14 +16,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.graphics.Bitmap;
 import android.widget.RatingBar;
-import android.widget.RemoteViews;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.*;
 
 //import com.facebook.FacebookSdk;
-import com.google.android.gms.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.ref.ReferenceQueue;
 
 public class ReviewShareActivity extends AppCompatActivity {
 
@@ -64,8 +55,8 @@ public class ReviewShareActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.review_rewards_share);
-        edtComment = (EditText) findViewById(R.id.editText);
-        edtComment.setFocusable(false);
+
+
 
        // points = WorkoutActivity.discoveryPoints;
         points =5;
@@ -100,7 +91,7 @@ public class ReviewShareActivity extends AppCompatActivity {
 
     //    fbButton = (Button) findViewById(R.id.shareButton);
 
-        btnAccept = (Button) findViewById(R.id.button);
+        btnAccept = (Button) findViewById(R.id.btnAccept);
 
 
 //      //  btnGoogleShare.setOnClickListener(new View.OnClickListener() {
@@ -199,7 +190,7 @@ public class ReviewShareActivity extends AppCompatActivity {
             btnAccept.setEnabled(true);
 
             btnGoogleShare.setEnabled(true);
-            edtComment.setFocusable(true);
+
          //   fbButton.setEnabled(false);
         }
     }
