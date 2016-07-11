@@ -74,6 +74,7 @@ public class WorkoutActivity extends AppCompatActivity {
     Handler distHandler;
     public static int discoveryPoints;
     public static int sharePoints ;
+    int x = 1;
 
 
     @Override
@@ -108,7 +109,7 @@ public class WorkoutActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
 //                double dist = msg.what;
                 String d = String.format("%.2f",  msg.obj) + " m";
-                lblDistance.setText( d );
+                lblDistance.setText(d);
                 super.handleMessage(msg);
             }
         };
@@ -117,8 +118,8 @@ public class WorkoutActivity extends AppCompatActivity {
     public void btnActivityClicked(View v) {
         if(hasWorkoutStarted == false){
             ((Button) v).setText("Session Started...");
-            initWorkoutActivity();
             hasWorkoutStarted = true;
+//            initWorkoutActivity();
 //            startStepListening();  //TODO start listening for steps
             ((Button) v).setText("Stop Session");
         }else{
@@ -162,7 +163,7 @@ public class WorkoutActivity extends AppCompatActivity {
                             new GoogleApiClient.ConnectionCallbacks() {
                                 @Override
                                 public void onConnected(Bundle bundle) {
-                                    Toast.makeText(getApplicationContext(), "Conected!!!", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getApplicationContext(), "Conected!!!", Toast.LENGTH_SHORT).show();
                                     findFitnessDataSources();
                                 }
 
@@ -171,16 +172,16 @@ public class WorkoutActivity extends AppCompatActivity {
                                     // If your connection to the sensor gets lost at some point,
                                     // you'll be able to determine the reason and react to it here.
                                     if (i == ConnectionCallbacks.CAUSE_NETWORK_LOST) {
-                                        Toast.makeText(getApplicationContext(), "Connection lost.  Cause: Network Lost.", Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(getApplicationContext(), "Connection lost.  Cause: Network Lost.", Toast.LENGTH_SHORT).show();
                                     } else if (i == ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
-                                        Toast.makeText(getApplicationContext(), "Connection lost.  Reason: Service Disconnected", Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(getApplicationContext(), "Connection lost.  Reason: Service Disconnected", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
                     ).enableAutoManage(this, 0, new GoogleApiClient.OnConnectionFailedListener() {
                         @Override
                         public void onConnectionFailed(ConnectionResult result) {
-                            Toast.makeText(getApplicationContext(), "Google Play services connection failed. Cause: " + result.toString(), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "Google Play services connection failed. Cause: " + result.toString(), Toast.LENGTH_SHORT).show();
                             Snackbar.make(WorkoutActivity.this.findViewById(R.id.main_activity_view), "Exception while connecting to Google Play services: " +
                                             result.getErrorMessage(),Snackbar.LENGTH_INDEFINITE).show();
                         }
@@ -196,19 +197,19 @@ public class WorkoutActivity extends AppCompatActivity {
                 .setResultCallback(new ResultCallback<DataSourcesResult>() {
                     @Override
                     public void onResult(DataSourcesResult dataSourcesResult) {
-                        Toast.makeText(getApplicationContext(), "Result: " + dataSourcesResult.getStatus().toString() , Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "Result: " + dataSourcesResult.getStatus().toString() , Toast.LENGTH_SHORT).show();
                         for (DataSource dataSource : dataSourcesResult.getDataSources()) {
                             walkDataSource = dataSource;
                             final DataSource ds = dataSource;
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), "Data source found: " + ds.toString(), Toast.LENGTH_SHORT).show();
-                                    Toast.makeText(getApplicationContext(), "Data Source type: " + ds.getDataType().getName(), Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getApplicationContext(), "Data source found: " + ds.toString(), Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getApplicationContext(), "Data Source type: " + ds.getDataType().getName(), Toast.LENGTH_SHORT).show();
                                 }
                             });
 
                             if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA) && stepsListener == null) {
-                                Toast.makeText(getApplicationContext(), "Data source for steps found!  Registering.", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getApplicationContext(), "Data source for steps found!  Registering.", Toast.LENGTH_SHORT).show();
                                 registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_DELTA);
                             }
                         }
@@ -221,8 +222,8 @@ public class WorkoutActivity extends AppCompatActivity {
     private void registerFitnessDataListener(DataSource dataSource, DataType dataType) {
         lblSteps.setText(String.valueOf(totalSteps));
         final DataSource ds = dataSource;
-
-        Toast.makeText(getApplicationContext(), "GETTING TO CODE" , Toast.LENGTH_SHORT).show();
+        initWorkoutActivity();
+//        Toast.makeText(getApplicationContext(), "GETTING TO CODE" , Toast.LENGTH_SHORT).show();
         thread = new Thread(new Runnable() {
             public void run() {
                 stepsListener = new OnDataPointListener() {
@@ -230,20 +231,28 @@ public class WorkoutActivity extends AppCompatActivity {
                     public void onDataPoint(DataPoint dataPoint) {
                         for (Field field : dataPoint.getDataType().getFields()) {
 //                            Looper.prepare();
-                            Value val = dataPoint.getValue(field);
+//                            Value val = dataPoint.getValue(field);
 //                            Toast.makeText(getApplicationContext(), "Detected DataPoint field: " + field.getName(), Toast.LENGTH_SHORT).show();
 //                            Toast.makeText(getApplicationContext(), "Detected DataPoint value: " + val, Toast.LENGTH_SHORT).show();
 //                            totalSteps += val.asInt();
                             Message stepsMessage = new Message();
                             Message distMessage = new Message();
-                            if(val.asInt() > 0){
-                                totalSteps += val.asInt();
-                                stepsMessage.what = totalSteps;
-                                totalDistance += (stepValue * val.asInt());
+//                            if(val.asInt() >= 0){
+
+//                                totalSteps += val.asInt();
+//                            try {
+//                                thread.sleep(1000);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+                            totalSteps += x;
+                            stepsMessage.what = totalSteps;
+//                                totalDistance += (stepValue * val.asInt());
+                            totalDistance += (stepValue * 1);
                                 distMessage.obj = totalDistance;
                                 stepsHandler.sendMessage(stepsMessage);
                                 distHandler.sendMessage(distMessage);
-                            }
+//                            }
 
                         }
                     }
@@ -252,15 +261,15 @@ public class WorkoutActivity extends AppCompatActivity {
         Fitness.SensorsApi.add(mClient, new SensorRequest.Builder()
                 .setDataSource(ds)
                 .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                .setSamplingRate(1, TimeUnit.SECONDS)
+//                .setSamplingRate(1, TimeUnit.SECONDS)
                 .build(), stepsListener)
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
                         if (status.isSuccess()) {
-                            Toast.makeText(getApplicationContext(), "Ready. set. GO!! ", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "Ready. set. GO!! ", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(getApplicationContext(), "Fatal Error... Im Dying :(", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "Fatal Error... Im Dying :(", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -278,9 +287,9 @@ public class WorkoutActivity extends AppCompatActivity {
                     @Override
                     public void onResult(Status status) {
                         if (status.isSuccess()) {
-                            Toast.makeText(getApplicationContext(), "Listener was removed!", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "Listener was removed!", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(getApplicationContext(), "Listener was not removed.", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "Listener was not removed.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -296,7 +305,7 @@ public class WorkoutActivity extends AppCompatActivity {
     private void requestPermissions() {
         boolean shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (shouldProvideRationale) {
-            Toast.makeText(getApplicationContext(), "Displaying permission rationale to provide additional context.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "Displaying permission rationale to provide additional context.", Toast.LENGTH_SHORT).show();
             Snackbar.make(findViewById(R.id.main_activity_view), R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.ok, new View.OnClickListener() {
                         @Override
@@ -306,17 +315,17 @@ public class WorkoutActivity extends AppCompatActivity {
                     })
                     .show();
         } else {
-            Toast.makeText(getApplicationContext(), "Requesting permission", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "Requesting permission", Toast.LENGTH_SHORT).show();
             ActivityCompat.requestPermissions(WorkoutActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Toast.makeText(getApplicationContext(), "onRequestPermissionResult", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "onRequestPermissionResult", Toast.LENGTH_SHORT).show();
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.length <= 0) {
-                Toast.makeText(getApplicationContext(), "User interaction was cancelled.", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "User interaction was cancelled.", Toast.LENGTH_SHORT).show();
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 buildFitnessClient();
             } else {
