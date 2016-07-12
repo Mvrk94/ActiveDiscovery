@@ -105,7 +105,8 @@ public class AddActivity extends AppCompatActivity
                 Manifest.permission.ACCESS_FINE_LOCATION)) {
             // Enable the my location layer if the permission has been granted.
             enableMyLocation();
-        } else {
+        } else
+        {
             // Display the missing permission error dialog when the fragments resume.
             mPermissionDenied = true;
         }

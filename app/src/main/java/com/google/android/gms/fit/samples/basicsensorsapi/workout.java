@@ -3,20 +3,14 @@ package com.google.android.gms.fit.samples.basicsensorsapi;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.renderscript.Element;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,48 +20,31 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fit.samples.common.logger.Log;
-import com.google.android.gms.fit.samples.common.logger.LogView;
-import com.google.android.gms.fit.samples.common.logger.LogWrapper;
-import com.google.android.gms.fit.samples.common.logger.MessageOnlyLogFilter;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.FitnessActivities;
-import com.google.android.gms.fitness.FitnessStatusCodes;
-import com.google.android.gms.fitness.SessionsApi;
-import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
-import com.google.android.gms.fitness.data.Subscription;
 import com.google.android.gms.fitness.data.Value;
-import com.google.android.gms.fitness.request.DataDeleteRequest;
-import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.request.DataSourcesRequest;
 import com.google.android.gms.fitness.request.OnDataPointListener;
 import com.google.android.gms.fitness.request.SensorRequest;
-import com.google.android.gms.fitness.request.SessionInsertRequest;
-import com.google.android.gms.fitness.request.SessionReadRequest;
-import com.google.android.gms.fitness.result.DataReadResult;
 import com.google.android.gms.fitness.result.DataSourcesResult;
-import com.google.android.gms.fitness.result.ListSubscriptionsResult;
-import com.google.android.gms.fitness.result.SessionReadResult;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class workout extends AppCompatActivity implements ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class workout extends AppCompatActivity implements ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback
+{
     public static final String TAG = "BasicSensorsApi";
     public static final String SAMPLE_SESSION_NAME = "Afternoon run";
 
@@ -99,10 +76,12 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
     private boolean hasWorkoutStarted = false;
     TextView lblSteps;
     TextView lblDistance;
+    private GoogleMap mMap;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.workout_page);
 //        initializeLogging();
@@ -114,6 +93,8 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
         lblDistance = (TextView) findViewById(R.id.lblDistance);
         lblSteps.setText("0");
         lblDistance.setText("0m");
+
+
     }
 
     public void btnActivityClicked(View v) {
@@ -149,8 +130,15 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
     }
 
 
+    @Override
+    public void onMapReady(GoogleMap googleMap)
+    {
+        mMap = googleMap;
+    }
 
-    private class stepListeningTask extends AsyncTask<Void,Void,Void> {
+
+    private class stepListeningTask extends AsyncTask<Void,Void,Void>
+    {
         @Override
         protected Void doInBackground(Void... params) {
 //            Toast.makeText(getApplicationContext(), "Alternate Thread Started", Toast.LENGTH_SHORT).show();
@@ -235,6 +223,7 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
     protected void onResume() {
         super.onResume();
 
+
         // This ensures that if the user denies the permissions then uses Settings to re-enable
         // them, the app will start working.
         buildFitnessClient();
@@ -256,17 +245,14 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
                     .addConnectionCallbacks(
                             new GoogleApiClient.ConnectionCallbacks() {
                                 @Override
-                                public void onConnected(Bundle bundle) {
+                                public void onConnected(Bundle bundle)
+                                {
                                     Toast.makeText(getApplicationContext(), "Client Connected", Toast.LENGTH_SHORT).show();
-//                                    Log.i(TAG, "Connected!!!");
-                                    // Now you can make calls to the Fitness APIs.
-//                                    findFitnessDataSources();
-//                                    subscribe();
-//                                    new InsertAndVerifySessionTask().execute();
                                 }
 
                                 @Override
-                                public void onConnectionSuspended(int i) {
+                                public void onConnectionSuspended(int i)
+                                {
                                     // If your connection to the sensor gets lost at some point,
                                     // you'll be able to determine the reason and react to it here.
                                     if (i == ConnectionCallbacks.CAUSE_NETWORK_LOST) {
@@ -341,7 +327,8 @@ public class workout extends AppCompatActivity implements ConnectionCallbacks, G
 //        Log.i(TAG, "Ready");
 //    }
 
-    private boolean checkPermissions() {
+    private boolean checkPermissions()
+    {
         int permissionState = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
