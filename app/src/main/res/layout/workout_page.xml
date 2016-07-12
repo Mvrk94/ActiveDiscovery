@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<LinearLayout
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="100">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:background="#70e9ff"
-        android:layout_weight="40">
+        android:weightSum="100">
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:background="#70e9ff"
+            android:layout_weight="40"
+            android:id="@+id/mapArea">
+
+            <fragment
+                android:id="@+id/mapView"
+                android:layout_height="268dp"
+                android:layout_width="match_parent"
+                class="com.google.android.gms.maps.SupportMapFragment"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_gravity="left|bottom" />
+
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -114,5 +124,5 @@
 
         </RelativeLayout>
 
-</LinearLayout>
+    </LinearLayout>
 </FrameLayout>

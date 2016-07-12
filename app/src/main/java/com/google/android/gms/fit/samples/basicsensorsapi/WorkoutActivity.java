@@ -2,24 +2,21 @@ package com.google.android.gms.fit.samples.basicsensorsapi;
 
 
 import android.Manifest;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-//import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,32 +28,37 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fit.samples.common.logger.Log;
-import com.google.android.gms.fit.samples.common.logger.LogView;
-import com.google.android.gms.fit.samples.common.logger.LogWrapper;
-import com.google.android.gms.fit.samples.common.logger.MessageOnlyLogFilter;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.data.Session;
-import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.fitness.request.DataSourcesRequest;
 import com.google.android.gms.fitness.request.OnDataPointListener;
 import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.fitness.result.DataSourcesResult;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+//import android.view.ViewGroup;
 
-public class WorkoutActivity extends AppCompatActivity {
+public class WorkoutActivity extends AppCompatActivity implements
+        GoogleMap.OnMyLocationButtonClickListener,
+        OnMapReadyCallback,
+        ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private boolean mPermissionDenied = false;
+    private GoogleMap mMap;
     private GoogleApiClient mClient = null;
     private OnDataPointListener stepsListener;
     private static int totalSteps = 0;
@@ -90,6 +92,98 @@ public class WorkoutActivity extends AppCompatActivity {
         lblDistance = (TextView) findViewById(R.id.lblDistance);
         lblSteps.setText("0");
         lblDistance.setText("0 m");
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
+        mapFragment.getMapAsync(this);
+    }
+
+    public void nullify(){
+        stepsListener =null;
+        walkListener= null;
+        walkDataSource = null;
+        walkDataSet =  null;
+//        thread.stop();
+        Intent startIntent;
+        stepsHandler = null;
+        distHandler = null;
+    }
+
+
+    @Override
+    public void onMapReady(GoogleMap map)
+    {
+        mMap = map;
+
+        mMap.setOnMyLocationButtonClickListener(this);
+        enableMyLocation();
+        Latitudes p  =  new Latitudes();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-26.103657, 28.045737), 10));
+
+        map.addPolyline((new PolylineOptions())
+                .addAll(Latitudes.route)
+                .width(15)
+                .color(Color.GREEN)
+                .geodesic(true));
+        mMap.addMarker(new MarkerOptions().position(p.route.get(0)).title("start Activity"));
+        mMap.addMarker(new MarkerOptions().position(p.route.get(Latitudes.route.size() - 1)).title("Get your points here"));
+        mMap.setBuildingsEnabled(true);
+    }
+
+    private void enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        } else if (mMap != null) {
+            // Access to the location has been granted to the app.
+            mMap.setMyLocationEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+
+
+        Location location  = mMap.getMyLocation();
+        //check distance from start check point
+        //start camera location include the first location
+        CameraPosition currentCameraPosition = mMap.getCameraPosition();
+
+        float currentTilt = currentCameraPosition.tilt;
+
+        float newTilt = currentTilt + 10;
+        newTilt = (newTilt > 0) ? newTilt : 0;
+
+        CameraPosition cameraPosition = new CameraPosition.Builder(currentCameraPosition)
+                .tilt(newTilt).bearing(location.getBearing()).zoom(200).build();
+
+
+
+        changeCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        //changeCamera(CameraUpdateFactory.zoomIn());
+
+        return false;
+    }
+
+    private void changeCamera(CameraUpdate update) {
+        changeCamera(update, null);
+    }
+
+    /**
+     * Change the camera position by moving or animating the camera depending on the state of the
+     * animate toggle button.
+     */
+    private void changeCamera(CameraUpdate update, GoogleMap.CancelableCallback callback) {
+
+
+        int duration = 10;
+        mMap.animateCamera(update, Math.max(duration, 1), callback);
+
+        mMap.moveCamera(update);
+
     }
 
     public void initWorkoutActivity(){
@@ -130,10 +224,14 @@ public class WorkoutActivity extends AppCompatActivity {
             lblDistance.setText(String.format("%.2f", totalDistance));
             ((Button) v).setText("Start Session");
 //            thread.stop();
-            unregisterFitnessDataListener();
+          //  unregisterFitnessDataListener();
             discoveryPoints = calculateDiscoveryPoints(totalDistance);
             sharePoints = calculateSharePoints(totalDistance);
-            startActivity(new Intent(WorkoutActivity.this, ReviewShareActivity.class));
+
+            Intent workoutIntent = new Intent(this,ReviewShareActivity.class);
+            startActivity(workoutIntent);
+
+           // startActivity(new Intent(WorkoutActivity.this, ReviewShareActivity.class));
         }
     }
 
@@ -323,9 +421,12 @@ public class WorkoutActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 //        Toast.makeText(getApplicationContext(), "onRequestPermissionResult", Toast.LENGTH_SHORT).show();
-        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE)
+        {
             if (grantResults.length <= 0) {
 //                Toast.makeText(getApplicationContext(), "User interaction was cancelled.", Toast.LENGTH_SHORT).show();
+
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 buildFitnessClient();
             } else {
@@ -342,7 +443,38 @@ public class WorkoutActivity extends AppCompatActivity {
                             }
                         }).show();
             }
+            return;
         }
+
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+            return;
+        }
+
+        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // Enable the my location layer if the permission has been granted.
+            enableMyLocation();
+        } else {
+            // Display the missing permission error dialog when the fragments resume.
+            mPermissionDenied = true;
+        }
+
+
+    }
+
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        if (mPermissionDenied) {
+            // Permission was not granted, display error dialog.
+            showMissingPermissionError();
+            mPermissionDenied = false;
+        }
+    }
+
+    private void showMissingPermissionError() {
+        PermissionUtils.PermissionDeniedDialog
+                .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
 
 
