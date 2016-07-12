@@ -58,9 +58,10 @@ public class ReviewShareActivity extends AppCompatActivity {
 
 
 
-       // points = WorkoutActivity.discoveryPoints;
-        points =5;
-        sharePoints = 2;
+        points = WorkoutActivity.discoveryPoints;
+      //  points =5;
+
+        sharePoints = WorkoutActivity.sharePoints;
 
         dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
 
@@ -127,11 +128,11 @@ public class ReviewShareActivity extends AppCompatActivity {
             imgtakenPhoto.setImageBitmap(thumbnail);
 
 
-            tempUri = getImageUri(getApplicationContext(), thumbnail);
+          //  tempUri = getImageUri(getApplicationContext(), thumbnail);
 
             // CALL THIS METHOD TO GET THE ACTUAL PATH
 
-           finalFile = new File(getRealPathFromURI(tempUri));
+        //   finalFile = new File(getRealPathFromURI(tempUri));
             //finalFile = new File(dir,"selfie.jpeg");
 
 
