@@ -20,12 +20,19 @@ import android.widget.TextView;
 
 //import com.facebook.FacebookSdk;
 
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventAttendee;
+import com.google.api.services.calendar.model.EventDateTime;
+import com.google.api.services.calendar.model.EventReminder;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ReviewShareActivity extends AppCompatActivity {
 
@@ -44,11 +51,11 @@ public class ReviewShareActivity extends AppCompatActivity {
     Uri tempUri;
     File finalFile;
     int Count=0;
-    int points =0;
+    public static int points =0;
     int sharePoints =0;
     File dir;
     String possiblePath;
-
+    public static boolean hasDoneWorkout = false;
 
     public Button btnGoogleShare;
     @Override
@@ -88,6 +95,7 @@ public class ReviewShareActivity extends AppCompatActivity {
         btnGoogleShare = (Button) findViewById(R.id.share_button);
         btnGoogleShare.setOnClickListener(new btnGoogleShareClick());
         btnGoogleShare.setEnabled(false);
+
      //   saveImage();
 
     //    fbButton = (Button) findViewById(R.id.shareButton);
@@ -139,6 +147,8 @@ public class ReviewShareActivity extends AppCompatActivity {
         }
 
     }
+
+
 
     @Override
     protected void onResume(){
@@ -194,6 +204,12 @@ public class ReviewShareActivity extends AppCompatActivity {
 
          //   fbButton.setEnabled(false);
         }
+    }
+
+    public void btnAcceptClicked(View v){
+        Intent intent = new Intent(getApplicationContext(),TabbedActivity.class);
+        hasDoneWorkout = true;
+        startActivity(intent);
     }
 
     class btnGoogleShareClick implements Button.OnClickListener {

@@ -18,8 +18,8 @@
 
             <fragment
                 android:id="@+id/mapView"
-                android:layout_height="268dp"
-                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
                 class="com.google.android.gms.maps.SupportMapFragment"
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_gravity="left|bottom" />
@@ -57,7 +57,8 @@
                 android:textColor="#F8F8FF"
                 android:layout_alignBottom="@+id/imageView"
                 android:layout_alignLeft="@+id/lblDistance"
-                android:layout_alignStart="@+id/lblDistance" />
+                android:layout_alignStart="@+id/lblDistance"
+                android:textSize="20dp" />
 
             <TextView
                 style="@style/Widget.AppCompat.TextView.SpinnerItem"
@@ -67,9 +68,12 @@
                 android:id="@+id/lblDistance"
                 android:textColor="#F8F8FF"
                 android:paddingTop="25px"
+                android:textSize="20dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="26dp"
+                android:layout_marginEnd="26dp" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -78,7 +82,8 @@
                 android:background="@drawable/ic_running_dude"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_jogging" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -98,29 +103,19 @@
                 android:background="@drawable/ic_steps"
                 android:layout_toLeftOf="@+id/lblDistance"
                 android:layout_toStartOf="@+id/lblDistance"
-                android:layout_alignTop="@+id/lblRunning" />
+                android:layout_alignTop="@+id/lblRunning"
+                android:src="@drawable/ic_datavis_steps_white" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageView3"
-                android:background="@drawable/ic_confirmation_number_black_24dp"
                 android:paddingRight="100px"
                 android:paddingTop="100px"
-                android:layout_centerVertical="true"
+                android:src="@drawable/ic_timeline_location"
+                android:layout_alignBottom="@+id/lblDistance"
                 android:layout_alignLeft="@+id/imageView2"
                 android:layout_alignStart="@+id/imageView2" />
-
-            <DigitalClock
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/digitalClock"
-                style="@style/TextAppearance.StatusBar.EventContent.Time"
-                android:textColor="#ffffff"
-                android:textSize="50px"
-                android:layout_alignTop="@+id/lblDistance"
-                android:layout_toRightOf="@+id/imageView"
-                android:layout_toEndOf="@+id/imageView" />
 
         </RelativeLayout>
 

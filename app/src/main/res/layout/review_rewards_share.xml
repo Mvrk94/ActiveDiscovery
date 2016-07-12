@@ -67,11 +67,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ratingBar"
-            android:layout_centerHorizontal="true"
-            android:layout_alignBaseline="@+id/pointsTextView" />
+            android:layout_below="@+id/pointsTextView"
+            android:progressBackgroundTint="@color/light_grey"
+            android:progressTint="@color/orange"
+            android:secondaryProgressTint="@android:color/transparent"
+            android:layout_centerHorizontal="true" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="You earned                             points"
@@ -99,12 +102,13 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Accept"
+            android:text="Done"
             android:id="@+id/btnAccept"
             style="@android:style/Widget.Material.Button.Colored"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:background="@color/bright_sea_blue" />
+            android:background="@color/bright_sea_blue"
+            android:onClick="btnAcceptClicked" />
 
         <TextView
             android:layout_width="match_parent"

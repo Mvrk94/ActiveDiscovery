@@ -215,14 +215,14 @@ public class WorkoutActivity extends AppCompatActivity implements
             hasWorkoutStarted = true;
 //            initWorkoutActivity();
 //            startStepListening();  //TODO start listening for steps
-            ((Button) v).setText("Stop Session");
+            ((Button) v).setText("Stop");
         }else{
-            ((Button) v).setText("Stopping Session...");
+//            ((Button) v).setText("Stopping Session...");
             hasWorkoutStarted = false;
             unregisterFitnessDataListener();
             lblSteps.setText(totalSteps + "");
             lblDistance.setText(String.format("%.2f", totalDistance));
-            ((Button) v).setText("Start Session");
+            ((Button) v).setText("Start");
 //            thread.stop();
           //  unregisterFitnessDataListener();
             discoveryPoints = calculateDiscoveryPoints(totalDistance);
