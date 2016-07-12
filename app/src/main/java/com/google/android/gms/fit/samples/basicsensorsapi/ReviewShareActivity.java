@@ -151,13 +151,13 @@ public class ReviewShareActivity extends AppCompatActivity {
         }
         if(Count==1){
           //  Toast.makeText(getApplicationContext(),getApplicationInfo().dataDir,Toast.LENGTH_LONG).show();
-            saveFile(getApplicationContext(), thumbnail, "Image");
+       //     saveFile(getApplicationContext(), thumbnail, "Image");
           //  Toast.makeText(getApplicationContext(),possiblePath,Toast.LENGTH_SHORT).show();
 
           //  String path = saveToInternalStorage(thumbnail);
            //   String path1 = obtainPath(getApplicationContext(),"image");
            // finalFile = new File(path,"profile.jpg");
-            finalFile = new File(path,"Image.png");
+         //   finalFile = new File(path,"Image.png");
         }
 
 
@@ -237,7 +237,7 @@ public class ReviewShareActivity extends AppCompatActivity {
 
 
 
-        startActivity(Intent.createChooser(i, "Share Image"));
+      //  startActivity(Intent.createChooser(i, "Share Image"));
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {

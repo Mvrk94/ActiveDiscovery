@@ -1,7 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/linearLayout"
+    android:weightSum="1">
 
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView4"
+        android:src="@drawable/rewards"
+        android:layout_weight="0.04"
+        android:layout_marginTop="2dp" />
+
+    <ImageView
+        android:layout_width="306dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView5"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/vitality_points"
+        android:layout_weight="0.04"
+        android:layout_marginTop="8dp" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.03">
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status"
+            android:id="@+id/textView4"
+            android:layout_weight="0.04"
+            android:textAlignment="center"
+            android:layout_marginLeft="20dp"
+            android:textColor="#000c7d"
+            android:textStyle="bold"
+            android:textSize="18dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Points"
+            android:id="@+id/textView3"
+            android:layout_weight="0.03"
+            android:textAlignment="center"
+            android:layout_marginLeft="75dp"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textColor="#000c7d" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Points required"
+            android:id="@+id/textView2"
+            android:layout_weight="0.02"
+            android:textAlignment="center"
+            android:layout_marginLeft="35dp"
+            android:textColor="#000c7d"
+            android:textStyle="bold"
+            android:textSize="18dp" />
+        </TableRow>
+        <TableRow
+            android:id="@+id/tableRow6"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Silver"
+                android:id="@+id/lblStatus"
+                android:layout_weight="0.04"
+                android:textAlignment="center"
+                android:layout_marginLeft="20dp"
+                android:textColor="#64677d"
+                android:textStyle="bold"
+                android:textSize="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="37324"
+                android:id="@+id/lblPoints"
+                android:layout_weight="0.03"
+                android:textAlignment="center"
+                android:layout_marginLeft="78dp"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:textColor="#000001" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="7676"
+                android:id="@+id/lblRequiredPoints"
+                android:layout_weight="0.02"
+                android:textAlignment="center"
+                android:layout_marginLeft="70dp"
+                android:textColor="#000001"
+                android:textStyle="bold"
+                android:textSize="16dp" />
+        </TableRow>
+
+    </TableLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Last year July, 17th, you were at the JHB Color Run with friends"
+        android:id="@+id/textView8"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.04"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="10dp"
+        android:textAlignment="center" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView6"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/color_run" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Do it again 22 July 2016."
+        android:id="@+id/textView9"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.04"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="10dp"
+        android:textAlignment="center" />
+
+    <Button
+        android:layout_width="299dp"
+        android:layout_height="wrap_content"
+        android:text="Send Calendar Invite"
+        android:id="@+id/buttonInvite"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.04"
+        android:background="@color/bright_sea_blue"
+        android:textColor="#ffffff" />
 </LinearLayout>

@@ -137,7 +137,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Take a sexy post workout selfie and share it to add to those points you just earned"
-            android:id="@+id/textView8"
+            android:id="@+id/lblRequiredPoints"
             android:layout_alignTop="@+id/imgSelfie"
             android:layout_toRightOf="@+id/imgSelfie"
             android:layout_toEndOf="@+id/imgSelfie"
@@ -181,8 +181,8 @@
             android:id="@+id/sharePoints1"
             android:textSize="15dp"
             android:layout_above="@+id/btnAccept"
-            android:layout_alignLeft="@+id/textView8"
-            android:layout_alignStart="@+id/textView8"
+            android:layout_alignLeft="@+id/lblRequiredPoints"
+            android:layout_alignStart="@+id/lblRequiredPoints"
             android:layout_marginBottom="44dp" />
 
         <!--<com.facebook.share.widget.ShareButton-->
