@@ -14,9 +14,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="25dp"
         android:layout_gravity="center_vertical"
-        android:layout_margin="1dp"
+        android:layout_margin="0dp"
         android:background="@color/white"
 
         android:id="@+id/activity_image">
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Discover Activities in your area:"
+            android:text="Discover activities in your area:"
             android:id="@+id/textViewActivitiesArea"
             android:textColor="@color/blue_grey_900"
             android:layout_centerVertical="true"
@@ -49,9 +49,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="25dp"
         android:layout_gravity="center_vertical"
-        android:layout_margin="0dp"
+        android:layout_margin="1dp"
         android:background="@color/white"
 
         android:id="@+id/text_Upcoming_Events_info">
@@ -146,14 +146,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="more..."
             android:padding="2dp"
-            android:id="@+id/textView3"
+            android:id="@+id/textViewMore"
             android:layout_below="@+id/textViewdist"
             android:layout_alignLeft="@+id/textViewdist"
             android:layout_alignStart="@+id/textViewdist"
-            android:autoLink="web"
-            android:clickable="true"/>
+            />
 
 
     </RelativeLayout>

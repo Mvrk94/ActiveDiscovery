@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -178,6 +180,11 @@ public class TabbedActivity extends AppCompatActivity {
         {
             View rootView = inflater.inflate(R.layout.fragment_tabbed_home, container, false);
 
+          TextView textView =(TextView)rootView.findViewById(R.id.textViewMore);
+           textView.setClickable(true);
+         textView.setMovementMethod(LinkMovementMethod.getInstance());
+          String text = "<a href='https://www.discovery.co.za/portal/individual/vitality-team-vitality'> more... </a>";
+          textView.setText(Html.fromHtml(text));
 
             return rootView;
         }
@@ -303,7 +310,12 @@ public class TabbedActivity extends AppCompatActivity {
          * The fragment argument representing the section number for this
          * fragment.
          */
+
+        Button btnInvite;
+
         private static final String ARG_SECTION_NUMBER = "section_number";
+
+
 
         public PlaceholderFragmentDelight()
         {}
@@ -329,6 +341,16 @@ public class TabbedActivity extends AppCompatActivity {
                                  Bundle savedInstanceState)
         {
             View rootView = inflater.inflate(R.layout.fragment_tabbed_delight, container, false);
+
+            btnInvite = (Button) rootView.findViewById(R.id.buttonInvite);
+
+            btnInvite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
 
             return rootView;
         }
