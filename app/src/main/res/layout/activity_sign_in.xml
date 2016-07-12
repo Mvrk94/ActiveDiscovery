@@ -74,7 +74,9 @@
                android:id="@+id/editTextPass"
                android:layout_below="@+id/editText"
                android:layout_centerHorizontal="true"
-               android:textColor="@color/white"/>
+               android:gravity="center"
+               android:textColor="@color/white"
+               android:text="welovepizza" />
 
            <Button
                android:layout_width="210dp"
