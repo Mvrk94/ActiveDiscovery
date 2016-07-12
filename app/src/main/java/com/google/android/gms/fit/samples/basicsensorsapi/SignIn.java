@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.auth.api.Auth;
@@ -77,8 +78,8 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
             // and the GoogleSignInResult will be available instantly.
             Log.d(TAG, "Got cached sign-in");
-            GoogleSignInResult result = opr.get();
-            handleSignInResult(result);
+         //   GoogleSignInResult result = opr.get();
+         //   handleSignInResult(result);
         } else {
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
@@ -115,12 +116,13 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
             GoogleSignInAccount acct = result.getSignInAccount();
 
             //go to the tabbed view
-            startActivity(new Intent(this,TabbedActivity.class));
+            startActivity(new Intent(this,WorkoutActivity.class));
 
           //  mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             //updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
+       //     Toast.makeText(getApplicationContext(),"Not Connected",Toast.LENGTH_SHORT).show();
             updateUI(false);
         }
     }

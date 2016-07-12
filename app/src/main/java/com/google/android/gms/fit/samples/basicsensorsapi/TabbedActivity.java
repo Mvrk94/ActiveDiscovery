@@ -142,6 +142,9 @@ public class TabbedActivity extends AppCompatActivity {
         return true;
     }
 
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -154,14 +157,20 @@ public class TabbedActivity extends AppCompatActivity {
         {
             case R.id.action_settings:
                 return true;
+
             case R.id.action_sign_out:
                 Intent signOutIntent = new Intent(this, SignIn.class);
                 startActivity(signOutIntent);
-                default:
-                    return true;
+
+            case R.id.action_add_activity:
+                Intent addIntent = new Intent(this, AddActivity.class);
+                startActivity(addIntent);
+
 
 
         }
+
+        return false;
     }
 
     /**
@@ -274,6 +283,7 @@ public class TabbedActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_tabbed_activity, container, false);
             //Initialize a listview
             listview = (ListView) rootView.findViewById(R.id.listViewActivities);
+            listview.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
 //            imageId = {R.drawable.morning_run_square,
 //                                    R.drawable.lake_city_run,
