@@ -2,6 +2,7 @@ package com.google.android.gms.fit.samples.basicsensorsapi;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +22,7 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.maps.GoogleMap;
@@ -76,6 +78,43 @@ public class TabbedActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
+        {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                switch (position)
+                {
+
+                    case-1:
+                        fab.hide();
+
+                        break;
+                    case 0:
+                        fab.hide();
+                        break;
+                    case 1:
+                        fab.show();
+                        break;
+                    case 2:
+                        fab.hide();
+                        break;
+                    default:
+                        fab.hide();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -104,7 +143,8 @@ public class TabbedActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -115,38 +155,12 @@ public class TabbedActivity extends AppCompatActivity {
             case R.id.action_settings:
                 return true;
             case R.id.action_sign_out:
+                Intent signOutIntent = new Intent(this, SignIn.class);
+                startActivity(signOutIntent);
+                default:
+                    return true;
 
 
-                if(SignIn.mGoogleApiClient.isConnected())
-                {
-
-                    Auth.GoogleSignInApi.signOut(SignIn.mGoogleApiClient);
-                    Intent myIntent = new Intent(TabbedActivity.this,SignIn.class);
-                    TabbedActivity.this.startActivity(myIntent);
-
-//                    Auth.GoogleSignInApi.signOut(SignIn.mGoogleApiClient).setResultCallback(
-//                        new ResultCallback<Status>() {
-//                            @Override
-//                            public void onResult(Status status) {
-//                                // [START_EXCLUDE]
-//                                Intent myIntent = new Intent(TabbedActivity.this,SignIn.class);
-//                                TabbedActivity.this.startActivity(myIntent);
-//                                // [END_EXCLUDE]
-//                            }
-//                        });
-
-
-                    SignIn.mGoogleApiClient.disconnect();
-                    SignIn.mGoogleApiClient.connect();
-                }
-                //Intent myIntent = new Intent(TabbedActivity.this,SignIn.class);
-                 //               TabbedActivity.this.startActivity(myIntent);
-
-                //sign the user out
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 
