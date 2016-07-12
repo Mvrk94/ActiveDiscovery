@@ -26,8 +26,27 @@ public class ActivitiesDetailsActivity extends AppCompatActivity
         Bundle extras = getIntent().getExtras();
 
 //        Toast.makeText(getApplicationContext(),extras.getString("position"),Toast.LENGTH_SHORT).show();
-        int position = Integer.parseInt(extras.getString("position"));
+
+        TextView txtName = (TextView)findViewById(R.id.txtName);
+        TextView txtDist = (TextView)findViewById(R.id.txtDistValue);
         ImageView img = (ImageView)findViewById(R.id.imgViewActivityImage);
+        RatingBar ratingBar = (RatingBar)findViewById(R.id.ratingBar);
+
+        int position = Integer.parseInt(extras.getString("position"));
         img.setImageResource(com.google.android.gms.fit.samples.basicsensorsapi.TabbedActivity.imageId[position]);
+        txtName.setText(com.google.android.gms.fit.samples.basicsensorsapi.TabbedActivity.activitiesarr[position]);
+        txtDist.setText(com.google.android.gms.fit.samples.basicsensorsapi.TabbedActivity.distancesArr[position]);
+        ratingBar.setRating(com.google.android.gms.fit.samples.basicsensorsapi.TabbedActivity.ratingsArr[position]);
+
     }
+
+    public void btnStartActivityClicked(View v) {
+        Intent myIntent = new Intent(getApplicationContext(),WorkoutActivity.class);
+        startActivity(myIntent);
+    }
+
+    public void btnTakeMeThereClicked(View v) {
+        Toast.makeText(getApplicationContext(),"LOLZ soz, take you there now now, but not now ;) ",Toast.LENGTH_SHORT).show();
+    }
+
 }

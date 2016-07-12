@@ -35,6 +35,7 @@ public class TabbedActivity extends AppCompatActivity {
     };
     public static String[] distancesArr;
     public static Integer[] ratingsArr;
+    public static String[] activitiesarr;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -87,6 +88,8 @@ public class TabbedActivity extends AppCompatActivity {
         /**
          * set up Drawer Toggle of the Toolbar
          */
+
+        activitiesarr =  new String[]{"Gem of Joburg Walk","Zoo Lake Trail","Center City Cycle","Outdoor Fitness Class","Zumba Dance Class"};
 
     }
 
@@ -239,7 +242,8 @@ public class TabbedActivity extends AppCompatActivity {
         Button mainFragButton;
         TextView mText;
 
-        final static String[] activitiesarr = new String[]{"Gem of Joburg Walk","Zoo Lake Trail","Center City Cycle","Outdoor Fitness Class","Zumba Dance Class"};
+
+
         @Override
         public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                                  Bundle savedInstanceState)
