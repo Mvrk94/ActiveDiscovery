@@ -70,6 +70,22 @@ public class AddActivity extends AppCompatActivity
     @Override
     public void onClick(View v)
     {
+
+        TabbedActivity.activitiesarr = new String[]{"Cross Fit Session","Gem of Joburg Walk","Zoo Lake Trail","Center City Cycle","Outdoor Fitness Class"};
+        TabbedActivity.distancesArr= new String[]{"Distance from you: 2.3km","Distance from you: 3km","Distance from you: 5km","Distance from you: 2km","Distance from you: 3km","Distance from you: 1.5km"};
+
+        TabbedActivity.imageId = new Integer[]{
+                R.drawable.cross_fit_group,
+                R.drawable.morning_run_square,
+                R.drawable.lake_city_run,
+                R.drawable.cycle_square,
+                R.drawable.pilates,
+                R.drawable.zumba_dance_class
+        };
+
+        TabbedActivity.ratingsArr = new Integer[]{2,3,5,4,3,3,5};
+
+
         Intent addIntent = new Intent(this, TabbedActivity.class);
         startActivity(addIntent);
 

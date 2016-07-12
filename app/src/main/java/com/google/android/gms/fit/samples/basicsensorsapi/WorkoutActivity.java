@@ -143,7 +143,7 @@ public class WorkoutActivity extends AppCompatActivity implements
 
     @Override
     public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
 
 
         Location location  = mMap.getMyLocation();
