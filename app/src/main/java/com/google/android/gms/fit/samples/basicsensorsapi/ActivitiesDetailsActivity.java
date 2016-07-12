@@ -66,6 +66,7 @@ public class ActivitiesDetailsActivity extends AppCompatActivity implements OnMa
         mMap = googleMap;
 
 
+
         Latitudes p  =  new Latitudes();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Latitudes.route.get(Latitudes.route.size()-1), 10));
 
