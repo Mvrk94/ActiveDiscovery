@@ -91,7 +91,7 @@
 
         <fragment
             android:id="@+id/map"
-            android:layout_height="330dp"
+            android:layout_height="301dp"
             android:layout_width="match_parent"
             class="com.google.android.gms.maps.SupportMapFragment"
             xmlns:android="http://schemas.android.com/apk/res/android"
