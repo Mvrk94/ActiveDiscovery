@@ -34,15 +34,11 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.api.client.util.DateTime;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventAttendee;
-import com.google.api.services.calendar.model.EventDateTime;
-import com.google.api.services.calendar.model.EventReminder;
 
 import java.util.Arrays;
 
-public class TabbedActivity extends AppCompatActivity {
+public class TabbedActivity extends AppCompatActivity
+{
     public static ListView listview;
     public static Integer[] imageId = {R.drawable.morning_run_square,
             R.drawable.lake_city_run,
@@ -51,9 +47,13 @@ public class TabbedActivity extends AppCompatActivity {
             R.drawable.zumba_dance_class,
             R.drawable.pilates2
     };
-    public static String[] distancesArr;
-    public static Integer[] ratingsArr;
-    public static String[] activitiesarr;
+
+    public static String[] distancesArr = new String[]{"Distance from you: 3km","Distance from you: 5km","Distance from you: 2km","Distance from you: 3km","Distance from you: 1.5km","Distance from you: 4.5km",};
+    public static Integer[] ratingsArr = new Integer[]{3,5,4,3,3,5};
+    public static String[] activitiesarr =  new String[]{"Gem of Joburg Walk","Zoo Lake Trail","Center City Cycle","Outdoor Fitness Class","Zumba Dance Class"};
+
+
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -92,43 +92,43 @@ public class TabbedActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
-        {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                switch (position)
-                {
-
-                    case-1:
-                        fab.hide();
-
-                        break;
-                    case 0:
-                        fab.hide();
-                        break;
-                    case 1:
-                        fab.show();
-                        break;
-                    case 2:
-                        fab.hide();
-                        break;
-                    default:
-                        fab.hide();
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+//        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//
+//        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
+//        {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//
+//                switch (position)
+//                {
+//
+//                    case-1:
+//                        fab.hide();
+//
+//                        break;
+//                    case 0:
+//                        fab.hide();
+//                        break;
+//                    case 1:
+//                        fab.show();
+//                        break;
+//                    case 2:
+//                        fab.hide();
+//                        break;
+//                    default:
+//                        fab.hide();
+//                }
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//
+//            }
+//        });
 
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -144,7 +144,7 @@ public class TabbedActivity extends AppCompatActivity {
          * set up Drawer Toggle of the Toolbar
          */
 
-        activitiesarr =  new String[]{"Gem of Joburg Walk","Zoo Lake Trail","Center City Cycle","Outdoor Fitness Class","Zumba Dance Class"};
+
 
     }
 
@@ -350,8 +350,7 @@ public class TabbedActivity extends AppCompatActivity {
 //            };
 
              //String [] activitiesarr = new String[] {"Gem of Joburg Walk","Zoo Lake Trail","Center City Cycle","Outdoor Fitness Class","Zumba Dance Class"};
-            distancesArr = new String[]{"Distance from you: 3km","Distance from you: 5km","Distance from you: 2km","Distance from you: 3km","Distance from you: 1.5km","Distance from you: 4.5km",};
-            ratingsArr = new Integer[]{3,5,4,3,3,5};
+
 
             ListAdapter listadpter = new CustomAdapter(getActivity(),imageId,activitiesarr,distancesArr,ratingsArr);
 
@@ -439,42 +438,7 @@ public class TabbedActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
-                        Event event = new Event()
-                                .setSummary("Colour Run!")
-                                .setLocation("Olifants Road, Johannesburg, 2194, South Africa")
-                                .setDescription(" The Happiest 5k on the Planet. Over 5 million Color Runners worldwide! Experience the 2016 Tropicolor Tour in your city.");
 
-                        DateTime startDateTime = new DateTime("2016-07-12T08:48:00-07:00");
-                        EventDateTime start = new EventDateTime()
-                                .setDateTime(startDateTime)
-                                .setTimeZone("Africa/Johannesburg");
-                        event.setStart(start);
-
-                        DateTime endDateTime = new DateTime("2016-07-12T08:49:00-07:00");
-                        EventDateTime end = new EventDateTime()
-                                .setDateTime(endDateTime)
-                                .setTimeZone("Africa/Johannesburg");
-                        event.setEnd(end);
-
-                        String[] recurrence = new String[] {"RRULE:FREQ=DAILY;COUNT=2"};
-                        event.setRecurrence(Arrays.asList(recurrence));
-
-                        EventAttendee[] attendees = new EventAttendee[] {
-                                new EventAttendee().setEmail("Chrisvdsande@gmail.com"),
-
-                        };
-                        event.setAttendees(Arrays.asList(attendees));
-
-                        EventReminder[] reminderOverrides = new EventReminder[] {
-                                new EventReminder().setMethod("email").setMinutes(24 * 60),
-                                new EventReminder().setMethod("popup").setMinutes(10),
-                        };
-                        Event.Reminders reminders = new Event.Reminders()
-                                .setUseDefault(false)
-                                .setOverrides(Arrays.asList(reminderOverrides));
-                        event.setReminders(reminders);
-
-                        String calendarId = "primary";
                     Toast.makeText(getContext(),"Invite sent.",Toast.LENGTH_SHORT).show();
                     }
 
