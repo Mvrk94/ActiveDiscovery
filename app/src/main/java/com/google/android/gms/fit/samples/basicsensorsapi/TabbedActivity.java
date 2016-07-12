@@ -1,6 +1,7 @@
 package com.google.android.gms.fit.samples.basicsensorsapi;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -25,8 +26,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventAttendee;
+import com.google.api.services.calendar.model.EventDateTime;
+import com.google.api.services.calendar.model.EventReminder;
+
+import java.util.Arrays;
 
 public class TabbedActivity extends AppCompatActivity {
     public static ListView listview;
@@ -176,7 +190,8 @@ public class TabbedActivity extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragmentHome extends Fragment {
+    public static class PlaceholderFragmentHome extends Fragment  implements OnMapReadyCallback
+    {
 
 
         /**
@@ -219,6 +234,10 @@ public class TabbedActivity extends AppCompatActivity {
             mapFrag = (SupportMapFragment) fm.findFragmentById(R.id.map_container);
             if (mapFrag == null) {
                 mapFrag = SupportMapFragment.newInstance();
+
+
+
+
                 fm.beginTransaction().replace(R.id.map_container, mapFrag).commit();
             }
 
@@ -230,7 +249,44 @@ public class TabbedActivity extends AppCompatActivity {
             if (mgglMap == null) {
                 mgglMap= mapFrag.getMap();
 
+                mgglMap.setBuildingsEnabled(true);
+                mgglMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-26.103657, 28.045737), 10));
+
+
+                mgglMap.addCircle(new CircleOptions().center(new LatLng(-26.104331, 28.050218)).radius(2500));
+
+
+                mgglMap.addMarker(new MarkerOptions().position(new LatLng(-26.101863, 28.075103)).title("Barlow and Innesfree Park walk"));
+
+                mgglMap.addMarker(new MarkerOptions().position(new LatLng(-26.099101, 28.033607)).title("George Lea Park Community Movement "));
+
+                mgglMap.addMarker(new MarkerOptions().position(new LatLng(-26.121532, 28.038740)).title("Hyde Park Trail"));
+
+
+
             }
+        }
+
+        @Override
+        public void onMapReady(GoogleMap googleMap)
+        {
+            mgglMap =  googleMap;
+            mgglMap.setBuildingsEnabled(true);
+            mgglMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-26.103657, 28.045737),5));
+
+
+            mgglMap.addCircle(new CircleOptions().center(new LatLng(-26.104331, 28.050218)).radius(2500));
+
+
+            mgglMap.addMarker(new MarkerOptions().position(new LatLng(-26.101863, 28.075103)).title("Barlow and Innesfree Park walk"));
+
+            mgglMap.addMarker(new MarkerOptions().position(new LatLng(-26.099101, 28.033607)).title("George Lea Park Community Movement "));
+
+            mgglMap.addMarker(new MarkerOptions().position(new LatLng(-26.121532, 28.038740)).title("Hyde Park Trail"));
+
+
+
+
         }
 
 
@@ -364,7 +420,67 @@ public class TabbedActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState)
         {
+            int currentPoints = 37324;
+            int reqPoints = 7676;
+          Button btnSendInvite;
+
             View rootView = inflater.inflate(R.layout.fragment_tabbed_delight, container, false);
+            if(ReviewShareActivity.hasDoneWorkout == true){
+                currentPoints += ReviewShareActivity.points ;
+                reqPoints -= ReviewShareActivity.points ;
+                TextView txtCurrentPoints = (TextView) rootView.findViewById(R.id.lblPoints);
+                txtCurrentPoints.setText(String.valueOf(currentPoints));
+                TextView txtReqPoints = (TextView) rootView.findViewById(R.id.lblRequiredPoints);
+                txtReqPoints.setText(String.valueOf(reqPoints));
+            }
+
+            btnSendInvite = (Button) rootView.findViewById(R.id.buttonInvite);
+            btnSendInvite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                        Event event = new Event()
+                                .setSummary("Colour Run!")
+                                .setLocation("Olifants Road, Johannesburg, 2194, South Africa")
+                                .setDescription(" The Happiest 5k on the Planet. Over 5 million Color Runners worldwide! Experience the 2016 Tropicolor Tour in your city.");
+
+                        DateTime startDateTime = new DateTime("2016-07-12T08:48:00-07:00");
+                        EventDateTime start = new EventDateTime()
+                                .setDateTime(startDateTime)
+                                .setTimeZone("Africa/Johannesburg");
+                        event.setStart(start);
+
+                        DateTime endDateTime = new DateTime("2016-07-12T08:49:00-07:00");
+                        EventDateTime end = new EventDateTime()
+                                .setDateTime(endDateTime)
+                                .setTimeZone("Africa/Johannesburg");
+                        event.setEnd(end);
+
+                        String[] recurrence = new String[] {"RRULE:FREQ=DAILY;COUNT=2"};
+                        event.setRecurrence(Arrays.asList(recurrence));
+
+                        EventAttendee[] attendees = new EventAttendee[] {
+                                new EventAttendee().setEmail("Chrisvdsande@gmail.com"),
+
+                        };
+                        event.setAttendees(Arrays.asList(attendees));
+
+                        EventReminder[] reminderOverrides = new EventReminder[] {
+                                new EventReminder().setMethod("email").setMinutes(24 * 60),
+                                new EventReminder().setMethod("popup").setMinutes(10),
+                        };
+                        Event.Reminders reminders = new Event.Reminders()
+                                .setUseDefault(false)
+                                .setOverrides(Arrays.asList(reminderOverrides));
+                        event.setReminders(reminders);
+
+                        String calendarId = "primary";
+                    Toast.makeText(getContext(),"Invite sent.",Toast.LENGTH_SHORT).show();
+                    }
+
+            });
+
+
 
             btnInvite = (Button) rootView.findViewById(R.id.buttonInvite);
 

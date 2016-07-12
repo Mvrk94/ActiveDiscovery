@@ -107,13 +107,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/ratingBar"
+                android:progressBackgroundTint="@color/light_grey"
+                android:progressTint="@color/orange"
+                android:secondaryProgressTint="@android:color/transparent"
                 android:layout_gravity="center_horizontal" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#3ce9ff"
-                android:id="@+id/map"></RelativeLayout>
+                android:id="@+id/map">
+
+
+
+
+            </RelativeLayout>
         </LinearLayout>
 
     </LinearLayout>

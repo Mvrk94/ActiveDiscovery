@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/imageView4"
-        android:src="@drawable/rewards"
+        android:src="@drawable/rewards_update"
         android:layout_weight="0.04"
         android:layout_marginTop="2dp" />
 
@@ -152,5 +152,6 @@
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.04"
         android:background="@color/bright_sea_blue"
-        android:textColor="#ffffff" />
+        android:textColor="#ffffff"
+        android:onClick="btnCalClicked" />
 </LinearLayout>
