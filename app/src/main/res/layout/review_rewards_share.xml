@@ -101,7 +101,6 @@
             android:layout_height="wrap_content"
             android:text="Accept"
             android:id="@+id/btnAccept"
-            style="@android:style/Widget.Material.Button.Colored"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@color/bright_sea_blue" />
@@ -170,6 +169,7 @@
             android:layout_alignLeft="@+id/imgSelfie"
             android:layout_alignStart="@+id/imgSelfie"
             android:layout_toStartOf="@+id/sharePoints1"
+            android:layout_toLeftOf="@+id/sharePoints1"
             android:layout_alignBottom="@+id/sharePoints1"
             android:layout_alignRight="@+id/imgSelfie"
             android:layout_alignEnd="@+id/imgSelfie" />
